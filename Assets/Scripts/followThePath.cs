@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using UnityEngine;
@@ -11,9 +12,10 @@ public class FollowThePath : MonoBehaviour {
     //public Transform[].position waypoints = GameObject.Find("Tilemap").GetComponent<tileLocations>()._gamePieceLocation;
     // public List<Vector3Int> waypoints;
     public List<UnityEngine.Vector3> waypoints;
-    private UnityEngine.Vector3 player1Offset = new UnityEngine.Vector3(0.0f, 0.25f, 0.0f);
-    private UnityEngine.Vector3 player2Offset = new UnityEngine.Vector3(0.25f, 0.25f, 0.0f);
-    private UnityEngine.Vector3 player4Offset = new UnityEngine.Vector3(0.25f, 0.0f, 0.0f);
+    private UnityEngine.Vector3 player1Offset = new UnityEngine.Vector3(0.05f, 0.20f, 0.0f);
+    private UnityEngine.Vector3 player2Offset = new UnityEngine.Vector3(0.20f, 0.20f, 0.0f);
+    private UnityEngine.Vector3 player3Offset = new UnityEngine.Vector3(0.05f, 0.05f, 0.0f);
+    private UnityEngine.Vector3 player4Offset = new UnityEngine.Vector3(0.20f, 0.05f, 0.0f);
     private UnityEngine.Vector3 locationToMoveTo;
 
     [SerializeField]
@@ -24,6 +26,7 @@ public class FollowThePath : MonoBehaviour {
     public int waypointIndex = 0;
 
     public bool moveAllowed = false;
+    public bool isMoving;
 
 	// Use this for initialization
 	private void Start () {
@@ -37,13 +40,13 @@ public class FollowThePath : MonoBehaviour {
         {
             locationToMoveTo = waypoints[waypointIndex] + player2Offset;
         }
-        else if (playerNumber == 4)
+        else if (playerNumber == 3)
         {
-            locationToMoveTo = waypoints[waypointIndex] + player4Offset;
+            locationToMoveTo = waypoints[waypointIndex] + player3Offset;
         }
         else
         {
-            locationToMoveTo = waypoints[waypointIndex];
+            locationToMoveTo = waypoints[waypointIndex] + player4Offset;
         }
         transform.position = locationToMoveTo;
         // UnityEngine.Vector3 t = waypoints[waypointIndex];
@@ -53,19 +56,24 @@ public class FollowThePath : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	private void Update () {
-        if (moveAllowed)
-            Move();
+	private void Update () 
+    {
+
 	}
 
-    private void Move()
+    public IEnumerator Move(int spaces)
     {
-        // if (waypointIndex <= waypoints.Length - 1)
-        if (waypointIndex <= waypoints.Count - 1)
+        Debug.Log("Moving Player " + playerNumber);
+        Debug.Log("Roll Value: " + spaces);
+
+        if (isMoving)
         {
-            // transform.position = Vector2.MoveTowards(transform.position,
-            // waypoints[waypointIndex].transform.position,
-            // moveSpeed * Time.deltaTime);
+            yield break;
+        }
+        isMoving = true;
+        while (spaces > 0)
+        {
+            waypointIndex++;
             if (playerNumber == 1)
             {
                 locationToMoveTo = waypoints[waypointIndex] + player1Offset;
@@ -74,24 +82,24 @@ public class FollowThePath : MonoBehaviour {
             {
                 locationToMoveTo = waypoints[waypointIndex] + player2Offset;
             }
-            else if (playerNumber == 4)
+            else if (playerNumber == 3)
             {
-                locationToMoveTo = waypoints[waypointIndex] + player4Offset;
+                locationToMoveTo = waypoints[waypointIndex] + player3Offset;
             }
             else
             {
-                locationToMoveTo = waypoints[waypointIndex];
+                locationToMoveTo = waypoints[waypointIndex] + player4Offset;
             }
-            transform.position = UnityEngine.Vector3.MoveTowards(transform.position,
-            locationToMoveTo,
-            moveSpeed * Time.deltaTime);
-            Debug.Log(waypoints[waypointIndex].ToString());
-
-            // if (transform.position == waypoints[waypointIndex].transform.position)
-            if (transform.position == waypoints[waypointIndex])
-            {
-                waypointIndex += 1;
-            }
+            Debug.Log("current: " + transform.position);
+            Debug.Log("moving to: " + locationToMoveTo);
+            while (MoveToNextNode(locationToMoveTo)) { yield return null; }
+            yield return new WaitForSeconds(0.1f);
+            spaces--;
         }
+        isMoving = false;
+    }
+    bool MoveToNextNode(UnityEngine.Vector3 goal)
+    {
+        return goal != (transform.position = UnityEngine.Vector3.MoveTowards(transform.position,locationToMoveTo,moveSpeed * Time.deltaTime));       
     }
 }

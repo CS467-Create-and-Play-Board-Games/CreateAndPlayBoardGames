@@ -1135,10 +1135,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypoints: []
-  moveSpeed: 1
+  moveSpeed: 5
   playerNumber: 3
   waypointIndex: 0
   moveAllowed: 0
+  isMoving: 0
 --- !u!1 &651632285
 GameObject:
   m_ObjectHideFlags: 0
@@ -2353,6 +2354,7 @@ GameObject:
   - component: {fileID: 1551937762}
   - component: {fileID: 1551937761}
   - component: {fileID: 1551937760}
+  - component: {fileID: 1551937763}
   m_Layer: 5
   m_Name: RollD6
   m_TagString: Untagged
@@ -2423,7 +2425,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1551937761}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1551937763}
+        m_TargetAssemblyTypeName: RollDice, Assembly-CSharp
+        m_MethodName: OnButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1551937761
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2462,6 +2476,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1551937758}
   m_CullTransparentMesh: 1
+--- !u!114 &1551937763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551937758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9277ecb89b4a14ba79c658d3ef2e15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sides: 6
+  roll_result: {fileID: 596816335}
 --- !u!1 &1591613535
 GameObject:
   m_ObjectHideFlags: 0
@@ -2474,6 +2502,7 @@ GameObject:
   - component: {fileID: 1591613539}
   - component: {fileID: 1591613538}
   - component: {fileID: 1591613537}
+  - component: {fileID: 1591613540}
   m_Layer: 5
   m_Name: RollD4
   m_TagString: Untagged
@@ -2544,7 +2573,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1591613538}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1591613540}
+        m_TargetAssemblyTypeName: RollDice, Assembly-CSharp
+        m_MethodName: OnButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1591613538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2583,6 +2624,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1591613535}
   m_CullTransparentMesh: 1
+--- !u!114 &1591613540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1591613535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9277ecb89b4a14ba79c658d3ef2e15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sides: 4
+  roll_result: {fileID: 596816335}
 --- !u!1 &1713982602
 GameObject:
   m_ObjectHideFlags: 0
@@ -3198,10 +3253,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypoints: []
-  moveSpeed: 1
+  moveSpeed: 5
   playerNumber: 2
   waypointIndex: 0
   moveAllowed: 0
+  isMoving: 0
+--- !u!1 &2055020452
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2055020454}
+  - component: {fileID: 2055020453}
+  m_Layer: 0
+  m_Name: GameControl
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2055020453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055020452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824b6054b460d524b8b0fedfdf745150, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &2055020454
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055020452}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 657.6267, y: 70.68111, z: -1.1812081}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2130749056
 GameObject:
   m_ObjectHideFlags: 0
@@ -3300,10 +3400,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypoints: []
-  moveSpeed: 1
+  moveSpeed: 5
   playerNumber: 1
   waypointIndex: 0
   moveAllowed: 0
+  isMoving: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -3313,3 +3414,4 @@ SceneRoots:
   - {fileID: 918621051}
   - {fileID: 1756637009}
   - {fileID: 404314584}
+  - {fileID: 2055020454}
