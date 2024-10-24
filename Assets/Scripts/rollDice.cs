@@ -1,9 +1,29 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-public class RollDice
+public class RollDice : MonoBehaviour
 {
-    Random rnd = new Random();
-    public int roll(int sides)
+    public int sides;
+    private int roll_value;
+    public TMP_Text roll_result;
+    private GameObject gameController;
+
+    void Awake()
     {
-        return rnd.Next(sides)+1
+        gameController = GameObject.Find("GameControl");
+    }
+
+    public int roll()
+    {
+        return Random.Range(1, sides+1);
+    }
+
+    public void OnButtonClick()
+    {
+        roll_value = roll();
+        roll_result.text = roll_value.ToString();
+        gameController.GetComponent<GameControl>().MovePlayer(roll_value);
     }
 }
+
