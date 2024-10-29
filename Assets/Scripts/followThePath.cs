@@ -49,9 +49,6 @@ public class FollowThePath : MonoBehaviour {
             locationToMoveTo = waypoints[waypointIndex] + player4Offset;
         }
         transform.position = locationToMoveTo;
-        // UnityEngine.Vector3 t = waypoints[waypointIndex];
-        // transform.position = t;
-        // Debug.Log(waypoints[waypointIndex].ToString() + "translated to " + t.ToString());
         Debug.Log(waypoints[waypointIndex].ToString());
 	}
 	
@@ -74,6 +71,10 @@ public class FollowThePath : MonoBehaviour {
         while (spaces > 0)
         {
             waypointIndex++;
+            if (waypointIndex >= waypoints.Count - 1)
+            {
+                spaces = 0;
+            }
             if (playerNumber == 1)
             {
                 locationToMoveTo = waypoints[waypointIndex] + player1Offset;
