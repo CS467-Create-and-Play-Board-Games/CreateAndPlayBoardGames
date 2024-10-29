@@ -3287,6 +3287,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 824b6054b460d524b8b0fedfdf745150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  whoWinsText: {fileID: 846502592}
+  numOfPlayers: 3
 --- !u!4 &2055020454
 Transform:
   m_ObjectHideFlags: 0
