@@ -5,10 +5,12 @@ using UnityEngine.Scripting;
 using UnityEngine.Tilemaps;
 using System.IO;
 using TMPro;
+using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager instance;
+    public List<CustomTile> tiles = new List<CustomTile>();
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -22,6 +24,14 @@ public class LevelManager : MonoBehaviour
     private float saveSuccessTime = 0;
     private float loadSuccessTime = 0;
     
+    // Start is called before the first frame update
+    void Start()
+    {
+        if (StateNameController.filePathForGame != null)
+        {
+            LoadFromStateName();
+        }    
+    }
 
     private void Update()
     {
@@ -57,15 +67,16 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    Dictionary<Vector3Int, Tile> GetGameTilesDict()
+    Dictionary<Vector3Int, string> GetGameTilesDict()
     {
-        Dictionary<Vector3Int, Tile> result = new Dictionary<Vector3Int, Tile>();
+        Dictionary<Vector3Int, string> result = new Dictionary<Vector3Int, string>();
         BoundsInt bounds = tilemap.cellBounds;
         foreach (Vector3Int pos in bounds.allPositionsWithin)
         {
-            Tile tile = tilemap.GetTile<Tile>(pos);
-            if (tile != null){
-                result.Add(pos, tile);
+            TileBase temp = tilemap.GetTile<Tile>(pos);
+            CustomTile tempTile = tiles.Find(t => t.tile == temp);
+            if (tempTile != null){
+                result.Add(pos, tempTile.id);
             }
         }
         return result;
@@ -93,8 +104,8 @@ public class LevelManager : MonoBehaviour
     {
        
         LevelData levelData = new LevelData();
-        Dictionary<Vector3Int, Tile> levelDict = GetGameTilesDict();
-        foreach(KeyValuePair<Vector3Int, Tile> entry in levelDict)
+        Dictionary<Vector3Int, string> levelDict = GetGameTilesDict();
+        foreach(KeyValuePair<Vector3Int, string> entry in levelDict)
         {
             levelData.tilePositions.Add(entry.Key);
             levelData.tiles.Add(entry.Value);
@@ -112,25 +123,38 @@ public class LevelManager : MonoBehaviour
     public void LoadLevel()
     {
         string fileName = loadAsInput.text;
-        string json = File.ReadAllText(Application.dataPath + "/Boards/"+ fileName + ".json");
+        string filePathForGame = Application.dataPath + "/Boards/"+ fileName + ".json";
+        StateNameController.filePathForGame = filePathForGame;
+        LoadFromStateName();  
+    }
+
+    public void LoadFromStateName()
+    {
+        string json = File.ReadAllText(StateNameController.filePathForGame);
         LevelData levelData = JsonUtility.FromJson<LevelData>(json);
         tilemap.ClearAllTiles();
-
-        for (int i = 0; i < levelData.tilePositions.Count; i++)
-        {
-            tilemap.SetTile(levelData.tilePositions[i], levelData.tiles[i]);
-        }
+        Debug.Log("Calling PlaceTiles...");
+        PlaceTiles(levelData);
         loadAsInput.gameObject.SetActive(false);
         loadButton.SetActive(false);
         loadSuccess.gameObject.SetActive(true);
         loadSuccessTime = Time.time;
+        StateNameController.filePathForGame = null;
+    }
 
+    public void PlaceTiles(LevelData levelData)
+    {
+        for (int i = 0; i < levelData.tilePositions.Count; i++)
+        {
+            TileBase tempTile = tiles.Find(t => t.name == levelData.tiles[i]).tile;
+            tilemap.SetTile(levelData.tilePositions[i], tempTile);
+        }
     }
 
 }
 
 public class LevelData
 {
-    public List<TileBase> tiles = new List<TileBase>();
+    public List<string> tiles = new List<string>();
     public List<Vector3Int> tilePositions = new List<Vector3Int>();
 }

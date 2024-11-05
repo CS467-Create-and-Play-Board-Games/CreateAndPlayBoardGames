@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+
 public class GameControl : MonoBehaviour {
 
     private static GameObject player1MoveText, player2MoveText;
@@ -111,4 +112,5 @@ public class GameControl : MonoBehaviour {
             whoseTurn++;
         }
     }
+
 }
