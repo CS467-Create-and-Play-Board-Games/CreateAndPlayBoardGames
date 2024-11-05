@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class GameControl : MonoBehaviour {
 
     private static GameObject whoWinsText, player1MoveText, player2MoveText;
@@ -75,4 +76,5 @@ public class GameControl : MonoBehaviour {
             whoseTurn++;
         }
     }
+
 }

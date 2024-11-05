@@ -151,6 +151,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00e619d90fb898343ac8779ccd3cc5b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: a0446e5fba41ec349a9e576b180bced4, type: 2}
+  - {fileID: 11400000, guid: b46b78b251b844e479cc81157919e33c, type: 2}
+  - {fileID: 11400000, guid: 6ce431efeb567ce47948c6cde876f504, type: 2}
   tilemap: {fileID: 907581423}
   saveAsInput: {fileID: 1834783638}
   loadAsInput: {fileID: 638930683}
