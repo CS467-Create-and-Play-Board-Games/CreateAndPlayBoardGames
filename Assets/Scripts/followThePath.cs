@@ -6,21 +6,14 @@ using UnityEngine.Tilemaps;
 
 public class FollowThePath : MonoBehaviour {
 
-    // public GameObject _waypoints;
-    // public Transform[] waypoints = _waypoints.GetComponentsInChildren<Transform>();
-    // public Tilemap _tilemap;
-    //public Transform[].position waypoints = GameObject.Find("Tilemap").GetComponent<tileLocations>()._gamePieceLocation;
-    // public List<Vector3Int> waypoints;
     public List<UnityEngine.Vector3> waypoints;
-    private UnityEngine.Vector3 player1Offset = new UnityEngine.Vector3(0.05f, 0.20f, 0.0f);
-    private UnityEngine.Vector3 player2Offset = new UnityEngine.Vector3(0.20f, 0.20f, 0.0f);
-    private UnityEngine.Vector3 player3Offset = new UnityEngine.Vector3(0.05f, 0.05f, 0.0f);
-    private UnityEngine.Vector3 player4Offset = new UnityEngine.Vector3(0.20f, 0.05f, 0.0f);
+    private UnityEngine.Vector3[] playerOffsets = new UnityEngine.Vector3[4];
     private UnityEngine.Vector3 locationToMoveTo;
+    private GameObject _gameController;
 
     [SerializeField]
     private float moveSpeed = 1f;
-    public float playerNumber = 0;
+    public int playerNumber = 0;
 
     [HideInInspector]
     public int waypointIndex = 0;
@@ -30,24 +23,16 @@ public class FollowThePath : MonoBehaviour {
 
 	// Use this for initialization
 	private void Start () {
-        
+
+        playerOffsets[0] = new UnityEngine.Vector3(0.05f, 0.20f, 0.0f);
+        playerOffsets[1] = new UnityEngine.Vector3(0.20f, 0.20f, 0.0f);
+        playerOffsets[2] = new UnityEngine.Vector3(0.05f, 0.05f, 0.0f);
+        playerOffsets[3] = new UnityEngine.Vector3(0.20f, 0.05f, 0.0f);
+        _gameController = GameObject.Find("GameControl");
         waypoints = GameObject.Find("Tilemap").GetComponent<tileLocations>()._worldGameTileLocation;
-        if (playerNumber == 1)
-        {
-            locationToMoveTo = waypoints[waypointIndex] + player1Offset;
-        }
-        else if (playerNumber == 2)
-        {
-            locationToMoveTo = waypoints[waypointIndex] + player2Offset;
-        }
-        else if (playerNumber == 3)
-        {
-            locationToMoveTo = waypoints[waypointIndex] + player3Offset;
-        }
-        else
-        {
-            locationToMoveTo = waypoints[waypointIndex] + player4Offset;
-        }
+
+        locationToMoveTo = waypoints[waypointIndex] + playerOffsets[playerNumber-1];
+
         transform.position = locationToMoveTo;
         Debug.Log(waypoints[waypointIndex].ToString());
 	}
@@ -75,22 +60,7 @@ public class FollowThePath : MonoBehaviour {
             {
                 spaces = 0;
             }
-            if (playerNumber == 1)
-            {
-                locationToMoveTo = waypoints[waypointIndex] + player1Offset;
-            }
-            else if (playerNumber == 2)
-            {
-                locationToMoveTo = waypoints[waypointIndex] + player2Offset;
-            }
-            else if (playerNumber == 3)
-            {
-                locationToMoveTo = waypoints[waypointIndex] + player3Offset;
-            }
-            else
-            {
-                locationToMoveTo = waypoints[waypointIndex] + player4Offset;
-            }
+            locationToMoveTo = waypoints[waypointIndex] + playerOffsets[playerNumber-1];
             Debug.Log("current: " + transform.position);
             Debug.Log("moving to: " + locationToMoveTo);
             while (MoveToNextNode(locationToMoveTo)) { yield return null; }
@@ -98,6 +68,10 @@ public class FollowThePath : MonoBehaviour {
             spaces--;
         }
         isMoving = false;
+
+        _gameController.GetComponent<GameControl>().CheckForGameOver(playerNumber);
+        _gameController.GetComponent<GameControl>().UpdatePlayerTurnText();
+
     }
     bool MoveToNextNode(UnityEngine.Vector3 goal)
     {
