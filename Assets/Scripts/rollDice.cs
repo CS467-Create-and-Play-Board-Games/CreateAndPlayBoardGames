@@ -5,25 +5,31 @@ using TMPro;
 public class RollDice : MonoBehaviour
 {
     public int sides;
-    private int roll_value;
-    public TMP_Text roll_result;
-    private GameObject gameController;
+    private int rollValue;
+    public TMP_Text rollResult;
+    private GameObject _gameController;
 
     void Awake()
     {
-        gameController = GameObject.Find("GameControl");
+        _gameController = GameObject.Find("GameControl");
     }
 
-    public int roll()
+    /// <summary>
+    /// Rolls a dices based on the sides value of the dice object
+    /// </summary>
+    private int Roll()
     {
         return Random.Range(1, sides+1);
     }
 
-    public void OnButtonClick()
+    /// <summary>
+    /// Calls roll() and then calls the MovePlayer function of _gameController to move the player the number of spaces rolled by the die
+    /// </summary>
+    public void RollAndMovePlayer()
     {
-        roll_value = roll();
-        roll_result.text = roll_value.ToString();
-        gameController.GetComponent<GameControl>().MovePlayer(roll_value);
+        rollValue = Roll();
+        rollResult.text = rollValue.ToString();
+        _gameController.GetComponent<GameControl>().MovePlayer(rollValue);
     }
 }
 
