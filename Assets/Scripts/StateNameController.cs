@@ -5,5 +5,6 @@ using UnityEngine;
 public class StateNameController : MonoBehaviour
 {
     public static string filePathForGame;
+    public static string clickedButtonText;
     
 }

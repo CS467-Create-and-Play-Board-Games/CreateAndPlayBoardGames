@@ -6,6 +6,7 @@ using UnityEngine.Tilemaps;
 using System.IO;
 using TMPro;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class LevelManager : MonoBehaviour
 {
@@ -15,6 +16,12 @@ public class LevelManager : MonoBehaviour
     {
         if (instance == null) instance = this;
         else Destroy(this);
+        // 
+        if (StateNameController.filePathForGame != null)
+        {
+            LoadFromStateName();
+        }    
+        //
     }
 
     public Tilemap tilemap;
@@ -27,22 +34,22 @@ public class LevelManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (StateNameController.filePathForGame != null)
-        {
-            LoadFromStateName();
-        }    
+        // if (StateNameController.filePathForGame != null)
+        // {
+        //     LoadFromStateName();
+        // }    
     }
 
     private void Update()
     {
-        if (saveSuccess.gameObject.activeSelf == true){
+        if (saveSuccess != null && saveSuccess.gameObject.activeSelf == true){
             if (Time.time - saveSuccessTime > 5.0) saveSuccess.gameObject.SetActive(false);
         }
-        if (loadSuccess.gameObject.activeSelf == true){
+        if (loadSuccess != null && loadSuccess.gameObject.activeSelf == true){
             if (Time.time - loadSuccessTime > 5.0) loadSuccess.gameObject.SetActive(false);
         }
 
-        if (loadAsInput.gameObject.activeSelf){
+        if (loadAsInput != null && loadAsInput.gameObject.activeSelf){
             if (PassLoadValidation())
             {
                 loadButton.SetActive(true);
@@ -54,7 +61,7 @@ public class LevelManager : MonoBehaviour
         }
 
         // TODO: Input validation for file name save
-        if (saveAsInput.gameObject.activeSelf)
+        if (saveAsInput != null && saveAsInput.gameObject.activeSelf)
         {
             if (PassSaveValidation())
             {
@@ -65,8 +72,10 @@ public class LevelManager : MonoBehaviour
                 saveButton.SetActive(false);
             }
         }
-
-        selectedTileName.text = tiles[GameObject.Find("Grid").GetComponentInChildren<LevelEditor>()._selectedTileIndex].name; 
+        if (selectedTileName != null) {
+            selectedTileName.text = tiles[GameObject.Find("Grid").GetComponentInChildren<LevelEditor>()._selectedTileIndex].name; 
+        }
+        
         
     }
 
@@ -134,14 +143,18 @@ public class LevelManager : MonoBehaviour
     public void LoadFromStateName()
     {
         string json = File.ReadAllText(StateNameController.filePathForGame);
+        // Debug.Log(json);
         LevelData levelData = JsonUtility.FromJson<LevelData>(json);
         tilemap.ClearAllTiles();
-        Debug.Log("Calling PlaceTiles...");
+        // Debug.Log("Calling PlaceTiles...");
         PlaceTiles(levelData);
-        loadAsInput.gameObject.SetActive(false);
-        loadButton.SetActive(false);
-        loadSuccess.gameObject.SetActive(true);
-        loadSuccessTime = Time.time;
+        if (loadAsInput != null) {
+            loadAsInput.gameObject.SetActive(false);
+            loadButton.SetActive(false);
+            loadSuccess.gameObject.SetActive(true);
+            loadSuccessTime = Time.time;
+        }
+        
         StateNameController.filePathForGame = null;
     }
 
