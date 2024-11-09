@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: loseTurn
   m_EditorClassIdentifier: 
   tile: {fileID: 11400000, guid: 056a975ebd55df246b25a18622fcc8c7, type: 2}
-  id: LoseTurn
+  id: loseTurn

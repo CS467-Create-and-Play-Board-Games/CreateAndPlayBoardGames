@@ -1,41 +1,61 @@
 {
     "tiles": [
+        "finish",
+        "blank",
+        "blank",
+        "skip",
         "blank",
         "blank",
         "blank",
         "blank",
+        "loseTurn",
+        "blank",
+        "blank",
+        "blank",
+        "skip",
+        "blank",
+        "blank",
+        "blank",
+        "loseTurn",
+        "blank",
+        "blank",
+        "skip",
+        "blank",
+        "swap",
         "blank",
         "blank",
         "blank",
         "blank",
+        "swap",
         "blank",
         "blank",
         "blank",
         "blank",
+        "swap",
         "blank",
         "blank",
         "blank",
+        "loseTurn",
+        "blank",
+        "skip",
+        "blank",
+        "loseTurn",
         "blank",
         "blank",
         "blank",
+        "swap",
+        "blank",
+        "start",
+        "blank",
+        "blank",
+        "loseTurn",
+        "blank",
+        "blank",
+        "skip",
         "blank",
         "blank",
         "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
-        "blank",
+        "swap",
         "blank",
         "blank",
         "blank"
@@ -87,7 +107,32 @@
             "z": 0
         },
         {
-            "x": 9,
+            "x": 10,
+            "y": -19,
+            "z": 0
+        },
+        {
+            "x": 11,
+            "y": -19,
+            "z": 0
+        },
+        {
+            "x": 12,
+            "y": -19,
+            "z": 0
+        },
+        {
+            "x": 13,
+            "y": -19,
+            "z": 0
+        },
+        {
+            "x": 14,
+            "y": -19,
+            "z": 0
+        },
+        {
+            "x": 14,
             "y": -18,
             "z": 0
         },
@@ -133,6 +178,31 @@
         },
         {
             "x": 9,
+            "y": -17,
+            "z": 0
+        },
+        {
+            "x": 10,
+            "y": -17,
+            "z": 0
+        },
+        {
+            "x": 11,
+            "y": -17,
+            "z": 0
+        },
+        {
+            "x": 12,
+            "y": -17,
+            "z": 0
+        },
+        {
+            "x": 13,
+            "y": -17,
+            "z": 0
+        },
+        {
+            "x": 14,
             "y": -17,
             "z": 0
         },
@@ -187,7 +257,32 @@
             "z": 0
         },
         {
-            "x": 9,
+            "x": 10,
+            "y": -15,
+            "z": 0
+        },
+        {
+            "x": 11,
+            "y": -15,
+            "z": 0
+        },
+        {
+            "x": 12,
+            "y": -15,
+            "z": 0
+        },
+        {
+            "x": 13,
+            "y": -15,
+            "z": 0
+        },
+        {
+            "x": 14,
+            "y": -15,
+            "z": 0
+        },
+        {
+            "x": 14,
             "y": -14,
             "z": 0
         },
@@ -233,6 +328,31 @@
         },
         {
             "x": 9,
+            "y": -13,
+            "z": 0
+        },
+        {
+            "x": 10,
+            "y": -13,
+            "z": 0
+        },
+        {
+            "x": 11,
+            "y": -13,
+            "z": 0
+        },
+        {
+            "x": 12,
+            "y": -13,
+            "z": 0
+        },
+        {
+            "x": 13,
+            "y": -13,
+            "z": 0
+        },
+        {
+            "x": 14,
             "y": -13,
             "z": 0
         }
