@@ -14,7 +14,13 @@ public class changeScene : MonoBehaviour
             toggleExitText(gameObject.GetComponentInChildren<TextMeshProUGUI>().text);
         }
         else{
-            SceneManager.LoadScene(gameObject.name);
+            StateNameController.clickedButtonText = gameObject.GetComponentInChildren<TextMeshProUGUI>().text;
+            if (StateNameController.clickedButtonText.ToLower() == "play"){
+                SceneManager.LoadScene("ChooseGame");
+            } else {
+                SceneManager.LoadScene(gameObject.name);
+            }
+            
         }
     }
 

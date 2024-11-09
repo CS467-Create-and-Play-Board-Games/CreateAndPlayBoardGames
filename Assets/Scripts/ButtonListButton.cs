@@ -19,7 +19,12 @@ public class ButtonListButton : MonoBehaviour
         string filePath = folder + fileName;
         Debug.Log("You clicked on the button associated with this file path " + filePath);
         StateNameController.filePathForGame = filePath;
-        SceneManager.LoadScene("CreateEdit");
+        if (StateNameController.clickedButtonText.ToLower() == "play"){
+            SceneManager.LoadScene("Play");
+        } else {
+            SceneManager.LoadScene("CreateEdit");
+        }
+        
     }
     // Start is called before the first frame update
     void Start()
