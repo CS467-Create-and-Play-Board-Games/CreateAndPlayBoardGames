@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: start
   m_EditorClassIdentifier: 
   tile: {fileID: 11400000, guid: 49379f105cb536847b34918cded09981, type: 2}
-  id: Start
+  id: start

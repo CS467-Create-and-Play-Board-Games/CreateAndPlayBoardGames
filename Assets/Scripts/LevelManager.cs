@@ -20,7 +20,7 @@ public class LevelManager : MonoBehaviour
     public Tilemap tilemap;
     public TMP_InputField saveAsInput, loadAsInput;
     public GameObject saveButton, loadButton;
-    public TextMeshProUGUI saveSuccess, loadSuccess;
+    public TextMeshProUGUI saveSuccess, loadSuccess, selectedTileName;
     private float saveSuccessTime = 0;
     private float loadSuccessTime = 0;
     
@@ -65,6 +65,9 @@ public class LevelManager : MonoBehaviour
                 saveButton.SetActive(false);
             }
         }
+
+        selectedTileName.text = tiles[GameObject.Find("Grid").GetComponentInChildren<LevelEditor>()._selectedTileIndex].name; 
+        
     }
 
     Dictionary<Vector3Int, string> GetGameTilesDict()
