@@ -7,6 +7,8 @@ using System.IO;
 using TMPro;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using Unity.VisualScripting.FullSerializer;
+using System.Linq;
 
 public class LevelManager : MonoBehaviour
 {
@@ -26,18 +28,15 @@ public class LevelManager : MonoBehaviour
 
     public Tilemap tilemap;
     public TMP_InputField saveAsInput, loadAsInput;
-    public GameObject saveButton, loadButton;
-    public TextMeshProUGUI saveSuccess, loadSuccess, selectedTileName;
+    public GameObject saveButton, loadButton, cancelButton;
+    public TextMeshProUGUI saveSuccess, loadSuccess, selectedTileName, validationMessage;
     private float saveSuccessTime = 0;
     private float loadSuccessTime = 0;
     
     // Start is called before the first frame update
     void Start()
     {
-        // if (StateNameController.filePathForGame != null)
-        // {
-        //     LoadFromStateName();
-        // }    
+        StateNameController.saveGameClicked = false;
     }
 
     private void Update()
@@ -97,10 +96,31 @@ public class LevelManager : MonoBehaviour
     public void ShowLoadDetails()
     {
         loadAsInput.gameObject.SetActive(true);
+        cancelButton.gameObject.SetActive(true);
     }
     public void ShowSaveDetails()
     {
-        saveAsInput.gameObject.SetActive(true);
+        StateNameController.saveGameClicked = true;
+        cancelButton.gameObject.SetActive(true);
+        if (PassSaveValidation()) {
+            validationMessage.gameObject.SetActive(false);
+            saveAsInput.gameObject.SetActive(true);
+        } else {
+            if (validationMessage != null) {
+                validationMessage.gameObject.SetActive(true);
+            }
+        }
+    }
+    public void CancelSaveOrLoad()
+    {
+        if (saveAsInput != null){
+            StateNameController.saveGameClicked = false;
+            saveAsInput.gameObject.SetActive(false);
+            loadAsInput.gameObject.SetActive(false);
+            saveButton.gameObject.SetActive(false);
+            loadButton.gameObject.SetActive(false);
+        }
+        cancelButton.gameObject.SetActive(false);
     }
 
     // TODO: validate user input
@@ -110,19 +130,23 @@ public class LevelManager : MonoBehaviour
     }
     private bool PassSaveValidation()
     {
-        return true;
+        LevelData levelData = GetLevelData();
+        int startTileCount = levelData.tiles.Where(x => x.ToLower().Contains("start")).Count();
+        int finishTileCount = levelData.tiles.Where(x => x.ToLower().Contains("finish")).Count();
+        if (startTileCount == 1 && finishTileCount == 1) {
+            if (validationMessage != null) {
+                validationMessage.text = "Valid Board";
+            }
+            return true;
+        }
+        if (validationMessage != null) {
+            validationMessage.text = "Invalid Board";
+        }
+        return false;
     }
     public void SaveLevel()
     {
-       
-        LevelData levelData = new LevelData();
-        Dictionary<Vector3Int, string> levelDict = GetGameTilesDict();
-        foreach(KeyValuePair<Vector3Int, string> entry in levelDict)
-        {
-            levelData.tilePositions.Add(entry.Key);
-            levelData.tiles.Add(entry.Value);
-        }
-
+        LevelData levelData = GetLevelData();
         string json = JsonUtility.ToJson(levelData, true);
         string fileName = saveAsInput.text;
         File.WriteAllText(Application.dataPath + "/Boards/" + fileName + ".json" , json);
@@ -130,6 +154,10 @@ public class LevelManager : MonoBehaviour
         saveButton.SetActive(false);
         saveSuccess.gameObject.SetActive(true);
         saveSuccessTime = Time.time;
+        StateNameController.saveGameClicked = false;
+        if (cancelButton != null) {
+            cancelButton.gameObject.SetActive(false);
+        }
     }
 
     public void LoadLevel()
@@ -138,15 +166,16 @@ public class LevelManager : MonoBehaviour
         string filePathForGame = Application.dataPath + "/Boards/"+ fileName + ".json";
         StateNameController.filePathForGame = filePathForGame;
         LoadFromStateName();  
+        if (cancelButton != null) {
+            cancelButton.gameObject.SetActive(false);
+        }
     }
 
     public void LoadFromStateName()
     {
         string json = File.ReadAllText(StateNameController.filePathForGame);
-        // Debug.Log(json);
         LevelData levelData = JsonUtility.FromJson<LevelData>(json);
         tilemap.ClearAllTiles();
-        // Debug.Log("Calling PlaceTiles...");
         PlaceTiles(levelData);
         if (loadAsInput != null) {
             loadAsInput.gameObject.SetActive(false);
@@ -166,6 +195,20 @@ public class LevelManager : MonoBehaviour
             tilemap.SetTile(levelData.tilePositions[i], tempTile);
         }
     }
+
+    private LevelData GetLevelData()
+    {
+        LevelData result = new LevelData();
+        Dictionary<Vector3Int, string> levelDict = GetGameTilesDict();
+        foreach(KeyValuePair<Vector3Int, string> entry in levelDict)
+        {
+            result.tilePositions.Add(entry.Key);
+            result.tiles.Add(entry.Value);
+        }
+
+        return result;
+    }
+
 
 }
 
