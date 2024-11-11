@@ -12,6 +12,7 @@ public class changeScene : MonoBehaviour
         Debug.Log(gameObject.name + " clicked.");
         if (gameObject.name == "Exit"){
             toggleExitText(gameObject.GetComponentInChildren<TextMeshProUGUI>().text);
+            Application.Quit();
         }
         else{
             StateNameController.clickedButtonText = gameObject.GetComponentInChildren<TextMeshProUGUI>().text;

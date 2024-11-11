@@ -17,11 +17,6 @@ public class tileLocations : MonoBehaviour
 
     public TMP_Text StartLocation, FinishLocation;
     public Sprite StartSprite, FinishSprite;
-    public GameObject prefab;
-    public GameObject _waypoints;
-    // public List<Tile> _gameTiles;
-    
-    // public List<UnityEngine.Vector3> _gameTileLocation;
 
     public Dictionary<Vector3Int, Tile> _gameTilesDict;
     public List<Vector3Int> _gameTileLocation;

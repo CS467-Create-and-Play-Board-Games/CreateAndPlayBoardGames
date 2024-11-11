@@ -6,6 +6,7 @@ using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
+using TMPro;
 
 public class LevelEditor : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class LevelEditor : MonoBehaviour
     [SerializeField] Camera cam;
 
     public int _selectedTileIndex;
+    // public TMP_Text _validationMessage;
 
     private void Update()
     {
@@ -32,8 +34,13 @@ public class LevelEditor : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.KeypadMinus)){
             _selectedTileIndex = PrevIndexInList(_selectedTileIndex, LevelManager.instance.tiles.Count);
         }
-        if (Input.GetMouseButton(0)) PlaceTile(pos);
-        if (Input.GetMouseButton(1)) ClearTile(pos);
+        if (!StateNameController.saveGameClicked && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
+        {
+            if (Input.GetMouseButton(0)) PlaceTile(pos);
+            if (Input.GetMouseButton(1)) ClearTile(pos);
+            // UpdateValidation();
+        }
+        
     }
 
     void PlaceTile(Vector3Int pos)
@@ -63,6 +70,16 @@ public class LevelEditor : MonoBehaviour
         } else {
             return result;
         }
-
     }
+
+    // private void UpdateValidation()
+    // {
+    //     /*
+    //     1 start tile
+    //     1 finish tile
+    //     linear path of connected tiles
+    //     */
+    // }
+
+
 }
