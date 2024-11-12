@@ -119,10 +119,6 @@ public class tileLocations : MonoBehaviour
     {
         _gameTilesDict = GetGameTilesDict();
         _gameTileLocation = GetPositionOrder(_gameTilesDict);
-        Debug.Log(_tileTypeOrder[0]);
-        Debug.Log(_tileTypeOrder[1]);
-        Debug.Log(_tileTypeOrder[2]);
-        Debug.Log(_tileTypeOrder[3]);
         _worldGameTileLocation = GetWorldPositionOrder(_gameTileLocation);
     }
     // Start is called before the first frame update
