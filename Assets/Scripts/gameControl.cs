@@ -47,17 +47,57 @@ public class GameControl : MonoBehaviour {
         if (!gameOver)
         {
             StartCoroutine(players[whoseTurn - 1].GetComponent<FollowThePath>().Move(rollValue));
-            if (whoseTurn >= numOfPlayers)
-            {
-                whoseTurn = 1;
-            }
-            else
-            {
-                whoseTurn++;
-            }
         }
     
     }
+    /// <summary>
+    /// Increments whoseTurn to the next player
+    /// </summary>
+    public void NextTurn()
+    {
+        whoseTurn++;
+        if (whoseTurn > numOfPlayers)
+        {
+            whoseTurn = 1;
+        }
+        if (players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped)
+        {
+            players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped = false;
+            NextTurn();
+        }
+    }
+    /// <summary>
+    /// Resolves the special tile when a player lands on it
+    /// </summary>
+    public void ResolveTile(string tileType)
+    {
+        switch (tileType)
+        {
+            case "Blank Tile":
+                break;
+            case "Start Tile":
+                break;
+            case "Finish Tile":
+                break;
+            case "Skip Tile":
+                Debug.Log("Skip Tile");
+                int playerSkipped;
+                do {
+                    playerSkipped = Random.Range(1, numOfPlayers+1);
+                } while(playerSkipped == whoseTurn);
+                Debug.Log("Player " + playerSkipped + " lost their turn");
+                players[playerSkipped-1].GetComponent<FollowThePath>().nextTurnSkipped = true;
+                break;
+            case "Lose Turn Tile":
+                Debug.Log("Player " + whoseTurn + " lost their turn");
+                players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped = true;
+                break;
+            case "Swap Places Tile":
+                Debug.Log("Swap Places Tile");
+                break;
+        }
+    }
+
     /// <summary>
     /// Updates the player turn text, called after a piece is finished moving
     /// </summary>
