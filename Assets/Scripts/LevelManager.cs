@@ -177,6 +177,7 @@ public class LevelManager : MonoBehaviour
         Debug.Log("Sorted Position List is [" + string.Join(" ", sortedPositionList.Select(x => x)) + "]");
         // The count of the sorted position list should equal the tile position count if every tile was added to the sorted position list
         if (levelData.tilePositions.Count() != sortedList.Count()){
+            ConnectedPathErrorMessage();
             return false;
         }
         
@@ -198,11 +199,8 @@ public class LevelManager : MonoBehaviour
                 sortedPositionList.Add(position);
                 return BuildSortedList(positionList, nextPosition, position, sortedPositionList);
             }
-            
-            // lastPosition = null;
         }
         return sortedPositionList;
-        // BuildSortedList(positionList, position, sortedPositionList);
     }
 
     private int CountNeighbors(Vector3Int targetPos, List<Vector3Int> positions)
@@ -223,6 +221,15 @@ public class LevelManager : MonoBehaviour
             validationMessage.text = "Invalid - Number of Neighbors";
         }
     }
+
+    private void ConnectedPathErrorMessage()
+    {
+        if (validationMessage != null) {
+            validationMessage.text = "Invalid - Connected Path";
+        }
+    }
+
+
     public void SaveLevel()
     {
         LevelData levelData = GetLevelData();
