@@ -130,19 +130,98 @@ public class LevelManager : MonoBehaviour
     }
     private bool PassSaveValidation()
     {
+        // Start and Finish tile check - 1 and only 1
         LevelData levelData = GetLevelData();
-        int startTileCount = levelData.tiles.Where(x => x.ToLower().Contains("start")).Count();
-        int finishTileCount = levelData.tiles.Where(x => x.ToLower().Contains("finish")).Count();
-        if (startTileCount == 1 && finishTileCount == 1) {
+        int startTileCount = 0;
+        if (levelData.tiles.Where(x => x.ToLower().Contains("start")) != null){
+            startTileCount = levelData.tiles.Where(x => x.ToLower().Contains("start")).Count();
+        }
+        int finishTileCount = 0;
+        if (levelData.tiles.Where(x => x.ToLower().Contains("finish")) != null){
+            finishTileCount = levelData.tiles.Where(x => x.ToLower().Contains("finish")).Count();
+        }
+
+        if (startTileCount != 1 || finishTileCount != 1) {
             if (validationMessage != null) {
-                validationMessage.text = "Valid Board";
+                validationMessage.text = "Invalid - 1 Start, 1 Finish";
             }
-            return true;
+            return false;
         }
+
+        // Number of neighbors check
+        // Start and Finish tiles should have only 1.
+        Vector3Int startPosition = levelData.tilePositions[levelData.tiles.FindIndex(x => x.ToLower().Contains("start"))];
+        Vector3Int finishPosition = levelData.tilePositions[levelData.tiles.FindIndex(x => x.ToLower().Contains("finish"))];
+        if (CountNeighbors(startPosition, levelData.tilePositions) != 1 || CountNeighbors(finishPosition, levelData.tilePositions) != 1){
+            NeighborErrorMessage();
+            return false;
+        }
+
+        // All other tiles should have 2.  
+        // List<Vector3Int> otherTilePositions = new List<Vector3Int>(levelData.tilePositions);
+        foreach (Vector3Int position in levelData.tilePositions)
+        {
+            if (position != startPosition && position != finishPosition) {
+                if (CountNeighbors(position, levelData.tilePositions) != 2) {
+                    NeighborErrorMessage();
+                    return false;
+                }
+            }
+        }
+
+        // Connected path from the start to the finish
+        List<Vector3Int> positionList = new List<Vector3Int>(levelData.tilePositions);
+        List<Vector3Int> sortedPositionList = new List<Vector3Int>{startPosition};
+        Vector3Int falsePosition = new Vector3Int(-1000, -1000, -1);
+        List<Vector3Int> sortedList = BuildSortedList(positionList, falsePosition, startPosition, sortedPositionList);
+        Debug.Log("Sorted Position List is [" + string.Join(" ", sortedPositionList.Select(x => x)) + "]");
+        // The count of the sorted position list should equal the tile position count if every tile was added to the sorted position list
+        if (levelData.tilePositions.Count() != sortedList.Count()){
+            return false;
+        }
+        
+        return true;
+    }
+
+    private List<Vector3Int> BuildSortedList(List<Vector3Int> positionList, Vector3Int lastPosition, Vector3Int nextPosition, List<Vector3Int> sortedPositionList){
+        // base case
+        if (lastPosition == nextPosition) {
+            if (positionList.Count() == 1){
+                sortedPositionList.Add(positionList.Last());
+            }
+            return sortedPositionList;
+        }
+        // recursive case
+        positionList.Remove(nextPosition);
+        foreach (Vector3Int position in positionList){
+            if (Vector3.Distance(position, nextPosition) < 1.1){
+                sortedPositionList.Add(position);
+                return BuildSortedList(positionList, nextPosition, position, sortedPositionList);
+            }
+            
+            // lastPosition = null;
+        }
+        return sortedPositionList;
+        // BuildSortedList(positionList, position, sortedPositionList);
+    }
+
+    private int CountNeighbors(Vector3Int targetPos, List<Vector3Int> positions)
+    {
+        int neighbors = -1;   
+        foreach (Vector3Int pos in positions)
+        {
+            if (Vector3.Distance(targetPos, pos) < 1.1) {
+                neighbors += 1;
+            }
+        }
+        return neighbors;
+    }
+
+    private void NeighborErrorMessage()
+    {
         if (validationMessage != null) {
-            validationMessage.text = "Invalid Board";
+            validationMessage.text = "Invalid - Number of Neighbors";
         }
-        return false;
     }
     public void SaveLevel()
     {
