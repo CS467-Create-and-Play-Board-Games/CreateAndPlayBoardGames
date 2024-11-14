@@ -72,14 +72,5 @@ public class LevelEditor : MonoBehaviour
         }
     }
 
-    // private void UpdateValidation()
-    // {
-    //     /*
-    //     1 start tile
-    //     1 finish tile
-    //     linear path of connected tiles
-    //     */
-    // }
-
 
 }
