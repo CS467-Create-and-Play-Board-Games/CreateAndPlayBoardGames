@@ -276,7 +276,7 @@ public class LevelManager : MonoBehaviour
         List<string> restrictedNames = new List<string>{"new blank", "new board", "new (blank)", "blank board"};
         foreach (string name in restrictedNames)
         {
-            if (userInput.Contains(name)) {
+            if (userInput.ToLower().Contains(name)) {
                 Debug.Log("Name is restricted");
                 return false;
             }
