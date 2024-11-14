@@ -9,6 +9,7 @@ using UnityEngine.UI;
 using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 public class LevelManager : MonoBehaviour
 {
@@ -59,17 +60,8 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        // TODO: Input validation for file name save
-        if (saveAsInput != null && saveAsInput.gameObject.activeSelf)
-        {
-            if (PassSaveValidation())
-            {
-                saveButton.SetActive(true);
-            }
-            else
-            {
-                saveButton.SetActive(false);
-            }
+        if (saveAsInput != null && saveAsInput.gameObject.activeSelf){
+            saveButton.SetActive(true);
         }
         if (selectedTileName != null) {
             selectedTileName.text = tiles[GameObject.Find("Grid").GetComponentInChildren<LevelEditor>()._selectedTileIndex].name; 
@@ -123,7 +115,7 @@ public class LevelManager : MonoBehaviour
         cancelButton.gameObject.SetActive(false);
     }
 
-    // TODO: validate user input
+    
     private bool PassLoadValidation()
     {
         return true;
@@ -142,9 +134,7 @@ public class LevelManager : MonoBehaviour
         }
 
         if (startTileCount != 1 || finishTileCount != 1) {
-            if (validationMessage != null) {
-                validationMessage.text = "Invalid - 1 Start, 1 Finish";
-            }
+            ErrorMessage("Invalid - 1 Start, 1 Finish");
             return false;
         }
 
@@ -184,7 +174,8 @@ public class LevelManager : MonoBehaviour
         return true;
     }
 
-    private List<Vector3Int> BuildSortedList(List<Vector3Int> positionList, Vector3Int lastPosition, Vector3Int nextPosition, List<Vector3Int> sortedPositionList){
+    private List<Vector3Int> BuildSortedList(List<Vector3Int> positionList, Vector3Int lastPosition, Vector3Int nextPosition, List<Vector3Int> sortedPositionList)
+    {
         // base case
         if (lastPosition == nextPosition) {
             if (positionList.Count() == 1){
@@ -215,6 +206,13 @@ public class LevelManager : MonoBehaviour
         return neighbors;
     }
 
+    private void ErrorMessage(string errorText)
+    {
+        if (validationMessage != null) {
+            validationMessage.text = errorText;
+        }
+    }
+    
     private void NeighborErrorMessage()
     {
         if (validationMessage != null) {
@@ -232,18 +230,59 @@ public class LevelManager : MonoBehaviour
 
     public void SaveLevel()
     {
+        Debug.Log("SaveLevel running.");
+        // Validate user input
+        string fileName = saveAsInput.text;
+        if (!ValidSaveAsInput(fileName)) {
+            saveSuccess.text = "Save Name Problem";
+            saveSuccess.gameObject.SetActive(true);
+            saveSuccessTime = Time.time;
+            return;
+        }
+        
+        // Save to file
         LevelData levelData = GetLevelData();
         string json = JsonUtility.ToJson(levelData, true);
-        string fileName = saveAsInput.text;
         File.WriteAllText(Application.dataPath + "/Boards/" + fileName + ".json" , json);
+        
+        // Clean up
         saveAsInput.gameObject.SetActive(false);
         saveButton.SetActive(false);
+        saveSuccess.text = "Save Successful";
         saveSuccess.gameObject.SetActive(true);
         saveSuccessTime = Time.time;
         StateNameController.saveGameClicked = false;
         if (cancelButton != null) {
             cancelButton.gameObject.SetActive(false);
         }
+    }
+
+    private bool ValidSaveAsInput(string userInput)
+    {
+        userInput = userInput.Trim();
+        // User must enter a name at least 3 and less than 31 characters.
+        if (userInput.Count() < 3 || userInput.Count() > 30) {
+            Debug.Log("Length validation " + userInput.Count());
+            return false;
+        }
+
+        // Characters must be alphanumeric, spaces, parenthesis, underscore, hyphen only
+        if (!Regex.IsMatch(userInput, @"^[a-zA-Z0-9 ()_-]+$")) {
+            Debug.Log("Regex validation failed");
+            return false;
+        };
+        
+        // User cannot overwrite the New (Blank) board.
+        List<string> restrictedNames = new List<string>{"new blank", "new board", "new (blank)", "blank board"};
+        foreach (string name in restrictedNames)
+        {
+            if (userInput.Contains(name)) {
+                Debug.Log("Name is restricted");
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     public void LoadLevel()
