@@ -28,10 +28,10 @@ public class LevelEditor : MonoBehaviour
     {
         Vector3Int pos = currentTilemap.WorldToCell(cam.ScreenToWorldPoint(Input.mousePosition));
         if (EventSystem.current.IsPointerOverGameObject()) return;  //https://www.youtube.com/watch?v=rATAnkClkWU
-        if (Input.GetKeyDown(KeyCode.KeypadPlus)){
+        if (Input.GetKeyDown(KeyCode.KeypadPlus) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.DownArrow)){
             _selectedTileIndex = NextIndexInList(_selectedTileIndex, LevelManager.instance.tiles.Count);
         }
-        if (Input.GetKeyDown(KeyCode.KeypadMinus)){
+        if (Input.GetKeyDown(KeyCode.KeypadMinus) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.UpArrow)){
             _selectedTileIndex = PrevIndexInList(_selectedTileIndex, LevelManager.instance.tiles.Count);
         }
         if (!StateNameController.saveGameClicked && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
