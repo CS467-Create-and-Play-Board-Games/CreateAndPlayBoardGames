@@ -12,8 +12,7 @@ public class ButtonListButton : MonoBehaviour
     public void LoadSceneByName()
     {
         string buttonText = GetComponentInChildren<TextMeshProUGUI>().text;
-        Debug.Log("The button text is " + buttonText);
-        int tabPos = buttonText.IndexOf('\t') - 1;
+        int tabPos = buttonText.IndexOf("  ");
         string fileName = buttonText[..tabPos] + ".json";
         string folder = Application.dataPath + "/Boards/";
         string filePath = folder + fileName;
@@ -26,15 +25,5 @@ public class ButtonListButton : MonoBehaviour
         }
         
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

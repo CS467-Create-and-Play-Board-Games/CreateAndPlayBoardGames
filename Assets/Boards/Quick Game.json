@@ -1,22 +1,16 @@
 {
     "tiles": [
         "finish",
-        "start",
-        "blank"
+        "start"
     ],
     "tilePositions": [
         {
-            "x": 6,
+            "x": 3,
             "y": -15,
             "z": 0
         },
         {
-            "x": 9,
-            "y": -15,
-            "z": 0
-        },
-        {
-            "x": 9,
+            "x": 3,
             "y": -14,
             "z": 0
         }
