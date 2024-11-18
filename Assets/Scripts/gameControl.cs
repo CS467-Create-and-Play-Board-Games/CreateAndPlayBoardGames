@@ -93,7 +93,12 @@ public class GameControl : MonoBehaviour {
                 players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped = true;
                 break;
             case "Swap Places Tile":
-                Debug.Log("Swap Places Tile");
+                int swapTarget;
+                do {
+                    swapTarget = Random.Range(1, numOfPlayers+1);
+                } while(swapTarget == whoseTurn);
+                Debug.Log("Swapping Player " + whoseTurn + " and Player " + swapTarget);
+                SwapPlayers(whoseTurn - 1, swapTarget - 1);
                 break;
         }
     }
@@ -120,6 +125,21 @@ public class GameControl : MonoBehaviour {
             whoWinsText.text = "Player " + playerNum.ToString() + " Wins";
             gameOver = true;
         }
+    }
+
+    /// <summary>
+    /// Swaps two players using the player numbers passed in
+    /// </summary>
+    public void SwapPlayers(int currentPlayerNum, int swapTargetNum)
+    {
+        int waypointIndexA = players[currentPlayerNum].GetComponent<FollowThePath>().waypointIndex;
+        int waypointIndexB = players[swapTargetNum].GetComponent<FollowThePath>().waypointIndex;
+        players[currentPlayerNum].GetComponent<FollowThePath>().waypointIndex = waypointIndexB;
+        players[swapTargetNum].GetComponent<FollowThePath>().waypointIndex = waypointIndexA;
+        UnityEngine.Vector3 locationToMoveTo = players[currentPlayerNum].GetComponent<FollowThePath>().waypoints[waypointIndexB];
+        StartCoroutine(players[currentPlayerNum].GetComponent<FollowThePath>().MoveForSwapPlayers(locationToMoveTo));
+        locationToMoveTo = players[swapTargetNum].GetComponent<FollowThePath>().waypoints[waypointIndexA];
+        StartCoroutine(players[swapTargetNum].GetComponent<FollowThePath>().MoveForSwapPlayers(locationToMoveTo));
     }
 
 }

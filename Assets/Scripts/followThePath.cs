@@ -81,4 +81,11 @@ public class FollowThePath : MonoBehaviour {
         return goal != (transform.position = UnityEngine.Vector3.MoveTowards(transform.position,locationToMoveTo,moveSpeed * Time.deltaTime));       
     }
 
+    public IEnumerator MoveForSwapPlayers(UnityEngine.Vector3 goal)
+    {
+        locationToMoveTo = goal + playerOffsets[playerNumber-1];
+        while (MoveToNextNode(locationToMoveTo)) { yield return null; }
+            yield return new WaitForSeconds(0.1f);
+    }
+
 }
