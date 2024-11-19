@@ -6,7 +6,8 @@ using System.Linq;
 
 public class GameControl : MonoBehaviour {
 
-    private static GameObject[] players;
+    // private static GameObject[] players;
+    private GameObject[] players;
 
     public TMP_Text whoWinsText;
     public TMP_Text playerMoveText;
@@ -19,25 +20,23 @@ public class GameControl : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        //whoWinsText = GameObject.Find("WhoWinsText");
+        // Get the number of players passed from the ChooseGame scene via the StateNameController
+        numOfPlayers = StateNameController.numberOfPlayers;
 
-        players = GameObject.FindGameObjectsWithTag("Player");
-        players = players.OrderBy(go => go.GetComponent<FollowThePath>().playerNumber).ToArray();
-        foreach (GameObject obj in players)
-        {
-            Debug.Log(obj.GetComponent<FollowThePath>().playerNumber);
+        // Fill in the players GameObject array.  Note, only active game objects can be found.
+        players = GameObject.FindGameObjectsWithTag("Player").OrderBy(go => go.GetComponent<FollowThePath>().playerNumber).Take(numOfPlayers).ToArray();
+
+        // Remove the non-player tokens from the board by deactivating them
+        GameObject[] nonPlayers = GameObject.FindGameObjectsWithTag("Player").Except(players).ToArray();
+        foreach (GameObject nonPlayer in nonPlayers) {
+            nonPlayer.SetActive(false);
         }
-        numOfPlayers = players.Length;
 
-
+        // No one has won if the game just started.
         whoWinsText.gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
 
-    }
     /// <summary>
     /// Calls the Move function from the followThePath class for the player object whose turn it currently is.
     /// </summary>
