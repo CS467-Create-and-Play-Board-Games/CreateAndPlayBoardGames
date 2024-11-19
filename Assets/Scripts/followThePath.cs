@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class FollowThePath : MonoBehaviour {
 
     public List<UnityEngine.Vector3> waypoints;
-    private UnityEngine.Vector3[] playerOffsets = new UnityEngine.Vector3[4];
+    private UnityEngine.Vector3[] playerOffsets = new UnityEngine.Vector3[8];
     private UnityEngine.Vector3 locationToMoveTo;
     private GameObject _gameController;
 
@@ -28,6 +29,10 @@ public class FollowThePath : MonoBehaviour {
         playerOffsets[1] = new UnityEngine.Vector3(0.20f, 0.20f, 0.0f);
         playerOffsets[2] = new UnityEngine.Vector3(0.05f, 0.05f, 0.0f);
         playerOffsets[3] = new UnityEngine.Vector3(0.20f, 0.05f, 0.0f);
+        playerOffsets[4] = UnityEngine.Vector3.Scale(new UnityEngine.Vector3(0.05f, 0.20f, 0.0f), new UnityEngine.Vector3(0.7f, 0.7f, 0));
+        playerOffsets[5] = UnityEngine.Vector3.Scale(new UnityEngine.Vector3(0.20f, 0.20f, 0.0f), new UnityEngine.Vector3(0.7f, 0.7f, 0));
+        playerOffsets[6] = UnityEngine.Vector3.Scale(new UnityEngine.Vector3(0.05f, 0.05f, 0.0f), new UnityEngine.Vector3(0.7f, 0.7f, 0));
+        playerOffsets[7] = UnityEngine.Vector3.Scale(new UnityEngine.Vector3(0.20f, 0.05f, 0.0f), new UnityEngine.Vector3(0.7f, 0.7f, 0));
         _gameController = GameObject.Find("GameControl");
         waypoints = GameObject.Find("Tilemap").GetComponent<tileLocations>()._worldGameTileLocation;
 

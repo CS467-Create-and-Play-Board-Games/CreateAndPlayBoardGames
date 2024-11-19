@@ -6,16 +6,26 @@ using TMPro;
 using UnityEditor.Build.Content;
 using UnityEngine.UI;
 using System;
+using Unity.VisualScripting;
 
 public class ChooseGameboard : MonoBehaviour
 {
     public GameObject buttonContentHolder, buttonTemplate;
+    public TextMeshProUGUI numberOfPlayersText, players;
+    public GameObject plusButton, minusButton;
 
     // Awake is called before Start
     void Awake()
     {
         List<string> fileList = ProcessFiles();
         GenerateButtons(buttonContentHolder, fileList);
+        if (StateNameController.clickedButtonText.ToLower().Contains("play")){
+            StateNameController.numberOfPlayers = 2;
+            numberOfPlayersText.gameObject.SetActive(true);
+            players.gameObject.SetActive(true);
+            plusButton.SetActive(true);
+            minusButton.SetActive(true);
+        }
     }
     
     List<string> ProcessFiles()
@@ -55,5 +65,19 @@ public class ChooseGameboard : MonoBehaviour
             button.transform.SetParent(buttonTemplate.transform.parent, false);
         }
         
+    }
+
+    public void IncreasePlayerCount(){
+        if (StateNameController.numberOfPlayers < 8) {
+            StateNameController.numberOfPlayers += 1;
+        }
+        players.text = StateNameController.numberOfPlayers.ToString();
+    }
+
+    public void DecreasePlayerCount(){
+        if (StateNameController.numberOfPlayers > 2) {
+            StateNameController.numberOfPlayers -= 1;
+        }
+        players.text = StateNameController.numberOfPlayers.ToString();
     }
 }
