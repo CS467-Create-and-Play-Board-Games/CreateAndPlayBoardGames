@@ -21,6 +21,7 @@ public class FollowThePath : MonoBehaviour {
 
     public bool moveAllowed = false;
     public bool isMoving;
+    public bool nextTurnSkipped = false;
 
 	// Use this for initialization
 	private void Start () {
@@ -73,13 +74,23 @@ public class FollowThePath : MonoBehaviour {
             spaces--;
         }
         isMoving = false;
-
+        _gameController.GetComponent<GameControl>().ResolveTile(GameObject.Find("Tilemap").GetComponent<tileLocations>()._tileTypeOrder[waypointIndex]);
+        _gameController.GetComponent<GameControl>().NextTurn();
         _gameController.GetComponent<GameControl>().CheckForGameOver(playerNumber);
         _gameController.GetComponent<GameControl>().UpdatePlayerTurnText();
 
     }
+
     bool MoveToNextNode(UnityEngine.Vector3 goal)
     {
         return goal != (transform.position = UnityEngine.Vector3.MoveTowards(transform.position,locationToMoveTo,moveSpeed * Time.deltaTime));       
     }
+
+    public IEnumerator MoveForSwapPlayers(UnityEngine.Vector3 goal)
+    {
+        locationToMoveTo = goal + playerOffsets[playerNumber-1];
+        while (MoveToNextNode(locationToMoveTo)) { yield return null; }
+            yield return new WaitForSeconds(0.1f);
+    }
+
 }

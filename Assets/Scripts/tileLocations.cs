@@ -21,6 +21,7 @@ public class tileLocations : MonoBehaviour
     public Dictionary<Vector3Int, Tile> _gameTilesDict;
     public List<Vector3Int> _gameTileLocation;
     public List<Vector3> _worldGameTileLocation;
+    public List<string> _tileTypeOrder;
 
     Dictionary<Vector3Int, Tile> GetGameTilesDict()
     {
@@ -44,6 +45,7 @@ public class tileLocations : MonoBehaviour
         {
             if (value.name == "Start Tile"){
                 result.Add(key);
+                _tileTypeOrder.Add(value.name);
             }
         }
         
@@ -52,6 +54,7 @@ public class tileLocations : MonoBehaviour
             {
                 if (!result.Contains(key) & Vector3.Distance(key, result.Last()) < 1.1){
                     result.Add(key);
+                    _tileTypeOrder.Add(value.name);
                 }
             }
         }

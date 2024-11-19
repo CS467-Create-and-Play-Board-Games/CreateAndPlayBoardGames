@@ -28,6 +28,7 @@ public class LevelEditor : MonoBehaviour
     {
         Vector3Int pos = currentTilemap.WorldToCell(cam.ScreenToWorldPoint(Input.mousePosition));
         if (EventSystem.current.IsPointerOverGameObject()) return;  //https://www.youtube.com/watch?v=rATAnkClkWU
+
         if (Input.GetKeyDown(KeyCode.KeypadPlus)  || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.RightArrow)){
             _selectedTileIndex = NextIndexInList(_selectedTileIndex, LevelManager.instance.tiles.Count);
         }

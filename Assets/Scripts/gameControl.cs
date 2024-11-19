@@ -46,17 +46,62 @@ public class GameControl : MonoBehaviour {
         if (!gameOver)
         {
             StartCoroutine(players[whoseTurn - 1].GetComponent<FollowThePath>().Move(rollValue));
-            if (whoseTurn >= numOfPlayers)
-            {
-                whoseTurn = 1;
-            }
-            else
-            {
-                whoseTurn++;
-            }
         }
     
     }
+    /// <summary>
+    /// Increments whoseTurn to the next player
+    /// </summary>
+    public void NextTurn()
+    {
+        whoseTurn++;
+        if (whoseTurn > numOfPlayers)
+        {
+            whoseTurn = 1;
+        }
+        if (players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped)
+        {
+            players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped = false;
+            NextTurn();
+        }
+    }
+    /// <summary>
+    /// Resolves the special tile when a player lands on it
+    /// </summary>
+    public void ResolveTile(string tileType)
+    {
+        switch (tileType)
+        {
+            case "Blank Tile":
+                break;
+            case "Start Tile":
+                break;
+            case "Finish Tile":
+                break;
+            case "Skip Tile":
+                Debug.Log("Skip Tile");
+                int playerSkipped;
+                do {
+                    playerSkipped = Random.Range(1, numOfPlayers+1);
+                } while(playerSkipped == whoseTurn);
+                Debug.Log("Player " + playerSkipped + " lost their turn");
+                players[playerSkipped-1].GetComponent<FollowThePath>().nextTurnSkipped = true;
+                break;
+            case "Lose Turn Tile":
+                Debug.Log("Player " + whoseTurn + " lost their turn");
+                players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped = true;
+                break;
+            case "Swap Places Tile":
+                int swapTarget;
+                do {
+                    swapTarget = Random.Range(1, numOfPlayers+1);
+                } while(swapTarget == whoseTurn);
+                Debug.Log("Swapping Player " + whoseTurn + " and Player " + swapTarget);
+                SwapPlayers(whoseTurn - 1, swapTarget - 1);
+                break;
+        }
+    }
+
     /// <summary>
     /// Updates the player turn text, called after a piece is finished moving
     /// </summary>
@@ -79,6 +124,21 @@ public class GameControl : MonoBehaviour {
             whoWinsText.text = "Player " + playerNum.ToString() + " Wins";
             gameOver = true;
         }
+    }
+
+    /// <summary>
+    /// Swaps two players using the player numbers passed in
+    /// </summary>
+    public void SwapPlayers(int currentPlayerNum, int swapTargetNum)
+    {
+        int waypointIndexA = players[currentPlayerNum].GetComponent<FollowThePath>().waypointIndex;
+        int waypointIndexB = players[swapTargetNum].GetComponent<FollowThePath>().waypointIndex;
+        players[currentPlayerNum].GetComponent<FollowThePath>().waypointIndex = waypointIndexB;
+        players[swapTargetNum].GetComponent<FollowThePath>().waypointIndex = waypointIndexA;
+        UnityEngine.Vector3 locationToMoveTo = players[currentPlayerNum].GetComponent<FollowThePath>().waypoints[waypointIndexB];
+        StartCoroutine(players[currentPlayerNum].GetComponent<FollowThePath>().MoveForSwapPlayers(locationToMoveTo));
+        locationToMoveTo = players[swapTargetNum].GetComponent<FollowThePath>().waypoints[waypointIndexA];
+        StartCoroutine(players[swapTargetNum].GetComponent<FollowThePath>().MoveForSwapPlayers(locationToMoveTo));
     }
 
 }
