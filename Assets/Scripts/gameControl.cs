@@ -73,31 +73,20 @@ public class GameControl : MonoBehaviour {
         switch (tileType)
         {
             case "Blank Tile":
-                break;
             case "Start Tile":
-                break;
             case "Finish Tile":
                 break;
             case "Skip Tile":
                 Debug.Log("Skip Tile");
-                int playerSkipped;
-                do {
-                    playerSkipped = Random.Range(1, numOfPlayers+1);
-                } while(playerSkipped == whoseTurn);
-                Debug.Log("Player " + playerSkipped + " lost their turn");
-                players[playerSkipped-1].GetComponent<FollowThePath>().nextTurnSkipped = true;
+                SkipRandomPlayerTurn();
                 break;
             case "Lose Turn Tile":
+                Debug.Log("Lose Turn Tile");
                 Debug.Log("Player " + whoseTurn + " lost their turn");
-                players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped = true;
+                SkipCurrentPlayerTurn();
                 break;
             case "Swap Places Tile":
-                int swapTarget;
-                do {
-                    swapTarget = Random.Range(1, numOfPlayers+1);
-                } while(swapTarget == whoseTurn);
-                Debug.Log("Swapping Player " + whoseTurn + " and Player " + swapTarget);
-                SwapPlayers(whoseTurn - 1, swapTarget - 1);
+                SwapPlayers();
                 break;
         }
     }
@@ -129,16 +118,40 @@ public class GameControl : MonoBehaviour {
     /// <summary>
     /// Swaps two players using the player numbers passed in
     /// </summary>
-    public void SwapPlayers(int currentPlayerNum, int swapTargetNum)
+    public void SwapPlayers()
     {
-        int waypointIndexA = players[currentPlayerNum].GetComponent<FollowThePath>().waypointIndex;
-        int waypointIndexB = players[swapTargetNum].GetComponent<FollowThePath>().waypointIndex;
-        players[currentPlayerNum].GetComponent<FollowThePath>().waypointIndex = waypointIndexB;
-        players[swapTargetNum].GetComponent<FollowThePath>().waypointIndex = waypointIndexA;
-        UnityEngine.Vector3 locationToMoveTo = players[currentPlayerNum].GetComponent<FollowThePath>().waypoints[waypointIndexB];
-        StartCoroutine(players[currentPlayerNum].GetComponent<FollowThePath>().MoveForSwapPlayers(locationToMoveTo));
-        locationToMoveTo = players[swapTargetNum].GetComponent<FollowThePath>().waypoints[waypointIndexA];
-        StartCoroutine(players[swapTargetNum].GetComponent<FollowThePath>().MoveForSwapPlayers(locationToMoveTo));
+        int swapTarget;
+                do {
+                    swapTarget = Random.Range(1, numOfPlayers+1);
+                } while(swapTarget == whoseTurn);
+        Debug.Log("Swapping Player " + whoseTurn + " and Player " + swapTarget);
+        int waypointIndexA = players[whoseTurn - 1].GetComponent<FollowThePath>().waypointIndex;
+        int waypointIndexB = players[swapTarget - 1].GetComponent<FollowThePath>().waypointIndex;
+        players[whoseTurn - 1].GetComponent<FollowThePath>().waypointIndex = waypointIndexB;
+        players[swapTarget - 1].GetComponent<FollowThePath>().waypointIndex = waypointIndexA;
+        UnityEngine.Vector3 locationToMoveTo = players[whoseTurn - 1].GetComponent<FollowThePath>().waypoints[waypointIndexB];
+        StartCoroutine(players[whoseTurn - 1].GetComponent<FollowThePath>().MoveForSwapPlayers(locationToMoveTo));
+        locationToMoveTo = players[swapTarget - 1].GetComponent<FollowThePath>().waypoints[waypointIndexA];
+        StartCoroutine(players[swapTarget - 1].GetComponent<FollowThePath>().MoveForSwapPlayers(locationToMoveTo));
+    }
+    /// <summary>
+    /// Sets a boolean so the current player's next turn is skipped
+    /// </summary>
+    public void SkipCurrentPlayerTurn()
+    {
+        players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped = true;
+    }
+        /// <summary>
+    /// Sets a boolean so a random player's, not including the current player, next turn is skipped
+    /// </summary>
+    public void SkipRandomPlayerTurn()
+    {
+        int playerSkipped;
+                do {
+                    playerSkipped = Random.Range(1, numOfPlayers+1);
+                } while(playerSkipped == whoseTurn);
+                Debug.Log("Player " + playerSkipped + " lost their turn");
+        players[playerSkipped - 1].GetComponent<FollowThePath>().nextTurnSkipped = true;
     }
 
 }

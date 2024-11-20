@@ -48,7 +48,9 @@ public class FollowThePath : MonoBehaviour {
     {
 
 	}
-
+    /// <summary>
+    /// Handles moving a token the number of spaces rolled. Calls the MoveToNextNode function to move a token each space.
+    /// </summary>
     public IEnumerator Move(int spaces)
     {
         Debug.Log("Moving Player " + playerNumber);
@@ -80,12 +82,16 @@ public class FollowThePath : MonoBehaviour {
         _gameController.GetComponent<GameControl>().UpdatePlayerTurnText();
 
     }
-
+    /// <summary>
+    /// Moves a token to the goal tile and returns whether or not the token has gotten there yet
+    /// </summary>
     bool MoveToNextNode(UnityEngine.Vector3 goal)
     {
         return goal != (transform.position = UnityEngine.Vector3.MoveTowards(transform.position,locationToMoveTo,moveSpeed * Time.deltaTime));       
     }
-
+    /// <summary>
+    /// Moves a token to a location, used for the SwapPlayers function.
+    /// </summary>
     public IEnumerator MoveForSwapPlayers(UnityEngine.Vector3 goal)
     {
         locationToMoveTo = goal + playerOffsets[playerNumber-1];
