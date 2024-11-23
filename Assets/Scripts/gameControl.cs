@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Linq;
+using UnityEditor.Rendering;
+using Unity.VisualScripting;
 
 
 public class GameControl : MonoBehaviour {
@@ -14,8 +16,13 @@ public class GameControl : MonoBehaviour {
 
     private int whoseTurn = 1;
     private int numOfPlayers;
+    private int winningPlayerNumber;
+    public float scaleMultiple = 1.5f;
+    private Vector3 originalTokenScale;
 
     private bool gameOver = false;
+    private bool prevGameOver = false;
+    [SerializeField] GameObject cameraSystem;
 
     // Use this for initialization
     void Start () {
@@ -34,6 +41,50 @@ public class GameControl : MonoBehaviour {
 
         // No one has won if the game just started.
         whoWinsText.gameObject.SetActive(false);
+
+        // Increase the size of player 1's token since they go first
+        originalTokenScale = players[0].transform.localScale;
+        players[0].transform.localScale *= scaleMultiple;
+    }
+
+    void Update()
+    {
+        // Adjust the camera position depending on whose turn it is.
+        float threshold = 0.75f;
+        float distance = Vector3.Distance(cameraSystem.transform.position, players[whoseTurn -1].transform.position);
+        float speed = 0.2f;
+        // Debug.Log("Dist b/w camera and player is " + distance);
+        if (distance > threshold) {
+            while (cameraSystem.transform.position != players[whoseTurn - 1].transform.position){
+                cameraSystem.transform.position = Vector3.MoveTowards(cameraSystem.transform.position, players[whoseTurn - 1].transform.position, 
+                    speed * Time.deltaTime);
+            }
+            
+        }
+
+        // Game Over mechanics - want the winning token to be bigger than the rest of the tokens.
+        // Note this is necessary because each player has their own coroutine so game over isn't captured before the turn is passed to the next player.
+        // Only want this code to run once.
+        if (gameOver != prevGameOver) {
+            foreach (GameObject player in players) {
+                if (player == players[winningPlayerNumber - 1]) {
+                    player.transform.localScale *= scaleMultiple;
+                } else {
+                    player.transform.localScale = originalTokenScale;
+                }
+            }
+        }
+        prevGameOver = gameOver;
+
+        // Center the winning token and animate it.
+        if (gameOver) {
+            cameraSystem.transform.position = players[winningPlayerNumber - 1].transform.position;
+            players[winningPlayerNumber - 1].transform.Rotate(0.0f, 1.0f, 0.0f);
+        }
+
+        
+        
+        
     }
 
 
@@ -54,16 +105,26 @@ public class GameControl : MonoBehaviour {
     /// </summary>
     public void NextTurn()
     {
-        whoseTurn++;
-        if (whoseTurn > numOfPlayers)
-        {
-            whoseTurn = 1;
+        if (!gameOver){
+            int prevTurn = whoseTurn;
+            whoseTurn++;
+            if (whoseTurn > numOfPlayers)
+            {
+                whoseTurn = 1;
+            }
+
+            // Increase the scale of the token for the player whose turn it is and make sure last token is reduced.
+            players[prevTurn - 1].transform.localScale /= scaleMultiple;
+            players[whoseTurn - 1].transform.localScale *= scaleMultiple;
+
+            // Skip the player if they had lost their turn
+            if (players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped)
+            {
+                players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped = false;
+                NextTurn();
+            }
         }
-        if (players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped)
-        {
-            players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped = false;
-            NextTurn();
-        }
+        
     }
     /// <summary>
     /// Resolves the special tile when a player lands on it
@@ -112,6 +173,7 @@ public class GameControl : MonoBehaviour {
             playerMoveText.gameObject.SetActive(false);
             whoWinsText.text = "Player " + playerNum.ToString() + " Wins";
             gameOver = true;
+            winningPlayerNumber = playerNum;
         }
     }
 

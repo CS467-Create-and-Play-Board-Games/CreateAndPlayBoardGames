@@ -8,6 +8,7 @@ public class RollDice : MonoBehaviour
     private int rollValue;
     public TMP_Text rollResult;
     private GameObject _gameController;
+ 
 
     void Awake()
     {
@@ -30,6 +31,7 @@ public class RollDice : MonoBehaviour
         rollValue = Roll();
         rollResult.text = rollValue.ToString();
         _gameController.GetComponent<GameControl>().MovePlayer(rollValue);
+
     }
 }
 
