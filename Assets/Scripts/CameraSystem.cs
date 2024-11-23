@@ -88,9 +88,6 @@ public class CameraSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        // transform.position = Input.mousePosition;
-        // transform.position = tilemap.transform.position;
         // https://www.youtube.com/watch?v=pJQndtJ2rk0
         Vector3 moveDir = new Vector3(0, 0, 0);
 
