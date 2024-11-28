@@ -1,16 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
-using Unity.VisualScripting;
+using Photon.Pun;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
-public class FollowThePath : MonoBehaviour {
+public class FollowThePath : MonoBehaviourPunCallbacks, IPunObservable {
 
     public List<UnityEngine.Vector3> waypoints;
-    private UnityEngine.Vector3[] playerOffsets = new UnityEngine.Vector3[8];
+
     private UnityEngine.Vector3 locationToMoveTo;
     private GameObject _gameController;
+    public UnityEngine.Vector3 myOffset;
+    private PhotonView photonView;
 
     [SerializeField]
     private float moveSpeed = 1f;
@@ -23,31 +23,23 @@ public class FollowThePath : MonoBehaviour {
     public bool isMoving;
     public bool nextTurnSkipped = false;
 
+    void Awake()
+    {
+        photonView = GetComponent<PhotonView>();
+    }
+
 	// Use this for initialization
 	private void Start () {
 
-        playerOffsets[0] = new UnityEngine.Vector3(0.05f, 0.20f, 0.0f);
-        playerOffsets[1] = new UnityEngine.Vector3(0.20f, 0.20f, 0.0f);
-        playerOffsets[2] = new UnityEngine.Vector3(0.05f, 0.05f, 0.0f);
-        playerOffsets[3] = new UnityEngine.Vector3(0.20f, 0.05f, 0.0f);
-        playerOffsets[4] = UnityEngine.Vector3.Scale(new UnityEngine.Vector3(0.05f, 0.20f, 0.0f), new UnityEngine.Vector3(0.7f, 0.7f, 0));
-        playerOffsets[5] = UnityEngine.Vector3.Scale(new UnityEngine.Vector3(0.20f, 0.20f, 0.0f), new UnityEngine.Vector3(0.7f, 0.7f, 0));
-        playerOffsets[6] = UnityEngine.Vector3.Scale(new UnityEngine.Vector3(0.05f, 0.05f, 0.0f), new UnityEngine.Vector3(0.7f, 0.7f, 0));
-        playerOffsets[7] = UnityEngine.Vector3.Scale(new UnityEngine.Vector3(0.20f, 0.05f, 0.0f), new UnityEngine.Vector3(0.7f, 0.7f, 0));
         _gameController = GameObject.Find("GameControl");
-        waypoints = GameObject.Find("Tilemap").GetComponent<tileLocations>()._worldGameTileLocation;
+        waypoints = GameObject.Find("Tilemap").GetComponent<TileLocations>()._worldGameTileLocation;
 
-        locationToMoveTo = waypoints[waypointIndex] + playerOffsets[playerNumber-1];
+        locationToMoveTo = waypoints[waypointIndex] + myOffset;
 
         transform.position = locationToMoveTo;
         Debug.Log(waypoints[waypointIndex].ToString());
 	}
 	
-	// Update is called once per frame
-	private void Update () 
-    {
-
-	}
     /// <summary>
     /// Handles moving a token the number of spaces rolled. Calls the MoveToNextNode function to move a token each space.
     /// </summary>
@@ -68,7 +60,8 @@ public class FollowThePath : MonoBehaviour {
             {
                 spaces = 0;
             }
-            locationToMoveTo = waypoints[waypointIndex] + playerOffsets[playerNumber-1];
+            // locationToMoveTo = waypoints[waypointIndex] + playerOffsets[playerNumber-1];
+            locationToMoveTo = waypoints[waypointIndex] + myOffset;
             Debug.Log("current: " + transform.position);
             Debug.Log("moving to: " + locationToMoveTo);
             while (MoveToNextNode(locationToMoveTo)) { yield return null; }
@@ -76,7 +69,7 @@ public class FollowThePath : MonoBehaviour {
             spaces--;
         }
         isMoving = false;
-        _gameController.GetComponent<GameControl>().ResolveTile(GameObject.Find("Tilemap").GetComponent<tileLocations>()._tileTypeOrder[waypointIndex]);
+        _gameController.GetComponent<GameControl>().ResolveTile(GameObject.Find("Tilemap").GetComponent<TileLocations>()._tileTypeOrder[waypointIndex]);
         _gameController.GetComponent<GameControl>().NextTurn();
         _gameController.GetComponent<GameControl>().CheckForGameOver(playerNumber);
         _gameController.GetComponent<GameControl>().UpdatePlayerTurnText();
@@ -94,9 +87,19 @@ public class FollowThePath : MonoBehaviour {
     /// </summary>
     public IEnumerator MoveForSwapPlayers(UnityEngine.Vector3 goal)
     {
-        locationToMoveTo = goal + playerOffsets[playerNumber-1];
+        locationToMoveTo = goal + myOffset;
         while (MoveToNextNode(locationToMoveTo)) { yield return null; }
             yield return new WaitForSeconds(0.1f);
     }
+
+    #region IPunObservable implementation
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting){
+            stream.SendNext(gameObject.GetComponent<SpriteRenderer>().sprite);
+        }
+    }
+
+    #endregion
 
 }

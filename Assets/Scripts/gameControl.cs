@@ -1,18 +1,14 @@
 using UnityEngine;
 using TMPro;
-using System.Collections;
 using System.Linq;
-using UnityEditor.Rendering;
-using Unity.VisualScripting;
+using Photon.Pun;
 
 
 public class GameControl : MonoBehaviour {
 
-    // private static GameObject[] players;
     private GameObject[] players;
 
-    public TMP_Text whoWinsText;
-    public TMP_Text playerMoveText;
+    public TMP_Text whoWinsText, playerMoveText;
 
     private int whoseTurn = 1;
     private int numOfPlayers;
@@ -23,21 +19,24 @@ public class GameControl : MonoBehaviour {
     private bool gameOver = false;
     private bool prevGameOver = false;
     [SerializeField] GameObject cameraSystem;
+    public GameObject audioControl;
+
+    void Awake()
+    {
+        if (StateNameController.OnlineMultiplayerTrue){
+            this.enabled = false;
+        }
+    }
 
     // Use this for initialization
     void Start () {
+        if (!this.enabled) return;
 
         // Get the number of players passed from the ChooseGame scene via the StateNameController
         numOfPlayers = StateNameController.numberOfPlayers;
 
         // Fill in the players GameObject array.  Note, only active game objects can be found.
         players = GameObject.FindGameObjectsWithTag("Player").OrderBy(go => go.GetComponent<FollowThePath>().playerNumber).Take(numOfPlayers).ToArray();
-
-        // Remove the non-player tokens from the board by deactivating them
-        GameObject[] nonPlayers = GameObject.FindGameObjectsWithTag("Player").Except(players).ToArray();
-        foreach (GameObject nonPlayer in nonPlayers) {
-            nonPlayer.SetActive(false);
-        }
 
         // No one has won if the game just started.
         whoWinsText.gameObject.SetActive(false);
@@ -49,6 +48,7 @@ public class GameControl : MonoBehaviour {
 
     void Update()
     {
+        if (!this.enabled) return;
         // Adjust the camera position depending on whose turn it is.
         float threshold = 0.75f;
         float distance = Vector3.Distance(cameraSystem.transform.position, players[whoseTurn -1].transform.position);
@@ -61,7 +61,6 @@ public class GameControl : MonoBehaviour {
             }
             
         }
-
         // Game Over mechanics - want the winning token to be bigger than the rest of the tokens.
         // Note this is necessary because each player has their own coroutine so game over isn't captured before the turn is passed to the next player.
         // Only want this code to run once.
@@ -81,9 +80,6 @@ public class GameControl : MonoBehaviour {
             cameraSystem.transform.position = players[winningPlayerNumber - 1].transform.position;
             players[winningPlayerNumber - 1].transform.Rotate(0.0f, 1.0f, 0.0f);
         }
-
-        
-        
         
     }
 
@@ -93,6 +89,7 @@ public class GameControl : MonoBehaviour {
     /// </summary>
     public void MovePlayer(int rollValue)
     {
+        if (!this.enabled) return;
         Debug.Log("Game over is " + gameOver);
         if (!gameOver)
         {
@@ -105,6 +102,7 @@ public class GameControl : MonoBehaviour {
     /// </summary>
     public void NextTurn()
     {
+        if (!this.enabled) return;
         if (!gameOver){
             int prevTurn = whoseTurn;
             whoseTurn++;
@@ -131,22 +129,30 @@ public class GameControl : MonoBehaviour {
     /// </summary>
     public void ResolveTile(string tileType)
     {
+        if (!this.enabled) return;
         switch (tileType)
         {
             case "Blank Tile":
             case "Start Tile":
+                audioControl.GetComponent<Audio>().PlayAudioClip(0);
+                break;
             case "Finish Tile":
+                audioControl.GetComponent<Audio>().PlayAudioClip(4);
                 break;
             case "Skip Tile":
                 Debug.Log("Skip Tile");
+                audioControl.GetComponent<Audio>().PlayAudioClip(1);
                 SkipRandomPlayerTurn();
                 break;
             case "Lose Turn Tile":
                 Debug.Log("Lose Turn Tile");
+                audioControl.GetComponent<Audio>().PlayAudioClip(2);
                 Debug.Log("Player " + whoseTurn + " lost their turn");
                 SkipCurrentPlayerTurn();
                 break;
             case "Swap Places Tile":
+                Debug.Log("Swap Places Tile");
+                audioControl.GetComponent<Audio>().PlayAudioClip(3);
                 SwapPlayers();
                 break;
         }
@@ -157,6 +163,7 @@ public class GameControl : MonoBehaviour {
     /// </summary>
     public void UpdatePlayerTurnText()
     {
+        if (!this.enabled) return;
         if (!gameOver)
         {
             playerMoveText.text = "Player " + whoseTurn.ToString() + "'s turn";
@@ -167,6 +174,7 @@ public class GameControl : MonoBehaviour {
     /// </summary>
     public void CheckForGameOver(int playerNum)
     {
+        if (!this.enabled) return;
         if (players[playerNum-1].GetComponent<FollowThePath>().waypointIndex == players[playerNum-1].GetComponent<FollowThePath>().waypoints.Count - 1)
         {
             whoWinsText.gameObject.SetActive(true);
@@ -182,6 +190,10 @@ public class GameControl : MonoBehaviour {
     /// </summary>
     public void SwapPlayers()
     {
+        if (!this.enabled) return;
+        if (numOfPlayers < 2){
+            return;
+        }
         int swapTarget;
                 do {
                     swapTarget = Random.Range(1, numOfPlayers+1);
@@ -201,6 +213,10 @@ public class GameControl : MonoBehaviour {
     /// </summary>
     public void SkipCurrentPlayerTurn()
     {
+        if (!this.enabled) return;
+        if (numOfPlayers < 2){
+            return;
+        }
         players[whoseTurn - 1].GetComponent<FollowThePath>().nextTurnSkipped = true;
     }
         /// <summary>
@@ -208,6 +224,10 @@ public class GameControl : MonoBehaviour {
     /// </summary>
     public void SkipRandomPlayerTurn()
     {
+        if (!this.enabled) return;
+        if (numOfPlayers < 2){
+            return;
+        }
         int playerSkipped;
                 do {
                     playerSkipped = Random.Range(1, numOfPlayers+1);

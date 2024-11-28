@@ -1,15 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Scripting;
 using UnityEngine.Tilemaps;
 using System.IO;
 using TMPro;
-using UnityEngine.UI;
-using Unity.VisualScripting;
-using Unity.VisualScripting.FullSerializer;
 using System.Linq;
 using System.Text.RegularExpressions;
+
 
 public class LevelManager : MonoBehaviour
 {
@@ -120,6 +116,7 @@ public class LevelManager : MonoBehaviour
     {
         return true;
     }
+    
     private bool PassSaveValidation()
     {
         // Start and Finish tile check - 1 and only 1
@@ -243,7 +240,15 @@ public class LevelManager : MonoBehaviour
         // Save to file
         LevelData levelData = GetLevelData();
         string json = JsonUtility.ToJson(levelData, true);
-        File.WriteAllText(Application.dataPath + "/Boards/" + fileName + ".json" , json);
+        // File.WriteAllText(Application.dataPath + "/Boards/" + fileName + ".json" , json);
+        try 
+        {
+            File.WriteAllText(Application.persistentDataPath + "/Boards/" + fileName + ".json" , json);
+        } catch (DirectoryNotFoundException) {
+            Directory.CreateDirectory(Application.persistentDataPath + "/Boards");
+            File.WriteAllText(Application.persistentDataPath + "/Boards/" + fileName + ".json" , json);
+        }
+        
         
         // Clean up
         saveAsInput.gameObject.SetActive(false);
@@ -288,7 +293,7 @@ public class LevelManager : MonoBehaviour
     public void LoadLevel()
     {
         string fileName = loadAsInput.text;
-        string filePathForGame = Application.dataPath + "/Boards/"+ fileName + ".json";
+        string filePathForGame = Application.persistentDataPath + "/Boards/"+ fileName + ".json";
         StateNameController.filePathForGame = filePathForGame;
         LoadFromStateName();  
         if (cancelButton != null) {

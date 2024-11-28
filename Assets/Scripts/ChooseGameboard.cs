@@ -1,22 +1,20 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using TMPro;
-using UnityEditor.Build.Content;
-using UnityEngine.UI;
-using System;
-using Unity.VisualScripting;
+
 
 public class ChooseGameboard : MonoBehaviour
 {
     public GameObject buttonContentHolder, buttonTemplate;
     public TextMeshProUGUI numberOfPlayersText, players;
-    public GameObject plusButton, minusButton;
+    public GameObject plusButton, minusButton, startFromScratchButton;
 
     // Awake is called before Start
     void Awake()
     {
+        // Display either the "Start from Scratch" button or the player selection dialog.
+        Debug.Log("StateNameController.clickedButtonText = " + StateNameController.clickedButtonText);
         List<string> fileList = ProcessFiles();
         GenerateButtons(buttonContentHolder, fileList);
         if (StateNameController.clickedButtonText.ToLower().Contains("play")){
@@ -25,12 +23,14 @@ public class ChooseGameboard : MonoBehaviour
             players.gameObject.SetActive(true);
             plusButton.SetActive(true);
             minusButton.SetActive(true);
+            startFromScratchButton.SetActive(false);
         }
     }
     
     List<string> ProcessFiles()
     {
-        string sourceDir = Application.dataPath + "/Boards/";
+        // string sourceDir = Application.dataPath + "/Boards/";
+        string sourceDir = Application.persistentDataPath + "/Boards/";
         string[] files = Directory.GetFiles(sourceDir);
         List<string> result = new List<string>();
         foreach (string file in files)
@@ -43,7 +43,7 @@ public class ChooseGameboard : MonoBehaviour
                 string lastModified = File.GetLastWriteTime(file).ToString("MM/dd/yy HH:mm");
                 string gameInfo = name + "  " + tileCount + " tiles  " + lastModified;
                 result.Add(gameInfo);
-                Debug.Log(gameInfo);
+                Debug.Log(gameInfo.ToString());
             }
         }
         return result;
@@ -55,6 +55,7 @@ public class ChooseGameboard : MonoBehaviour
         // Button generation based on https://www.youtube.com/watch?v=2TYLBusJKjc
         foreach (string file in files)
         {
+            Debug.Log("GenerateButtons file is " + file);
             // Prevent button creation for the _New (Blank) board if the user wants to play a game b/c the blank board is unplayable.
             if (StateNameController.clickedButtonText.ToLower() == "play" && file.Contains("_New (Blank)")) {
                 continue;
