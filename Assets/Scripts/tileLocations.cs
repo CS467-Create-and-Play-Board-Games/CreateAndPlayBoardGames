@@ -1,10 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using TMPro;
-using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -12,10 +8,10 @@ using UnityEngine.Tilemaps;
 // https://discussions.unity.com/t/tilemap-tile-positions-assistance/672652/3
 
 
-public class tileLocations : MonoBehaviour
+public class TileLocations : MonoBehaviour
 {
 
-    public TMP_Text StartLocation, FinishLocation;
+    public TMP_Text StartLocation, FinishLocation, tileCount;
     public Sprite StartSprite, FinishSprite;
 
     public Dictionary<Vector3Int, Tile> _gameTilesDict;
@@ -25,6 +21,7 @@ public class tileLocations : MonoBehaviour
 
     Dictionary<Vector3Int, Tile> GetGameTilesDict()
     {
+        // Generates a dictionary with every position that has a tile on the Grid
         Dictionary<Vector3Int, Tile> result = new Dictionary<Vector3Int, Tile>();
         BoundsInt bounds = gameObject.GetComponent<Tilemap>().cellBounds;
         foreach (Vector3Int pos in bounds.allPositionsWithin)
@@ -39,6 +36,7 @@ public class tileLocations : MonoBehaviour
 
     List <Vector3Int> GetPositionOrder(Dictionary<Vector3Int, Tile> gameTiles)
     {
+        // Puts the tiles in order beginning with the Start tile
         List <Vector3Int> result = new List<Vector3Int>();
         // Get the location of the Start Tile
         foreach(var (key, value) in gameTiles)
@@ -64,6 +62,7 @@ public class tileLocations : MonoBehaviour
 
     List <Vector3> GetWorldPositionOrder(List <Vector3Int> localOrderedPositions)
     {
+        // Translates the local Tilemap location to world coordinates.
         Tilemap tilemap = gameObject.GetComponent<Tilemap>();
         List <Vector3> result = new List<Vector3>();
         foreach (Vector3Int pos in localOrderedPositions)
@@ -72,30 +71,6 @@ public class tileLocations : MonoBehaviour
             result.Add(place);
         } 
         return result;
-    }
-
-    List<Tile> GetGameTiles()
-    {
-        List<Tile> result = new List<Tile>();
-        BoundsInt bounds = gameObject.GetComponent<Tilemap>().cellBounds;
-        foreach (Vector3Int pos in bounds.allPositionsWithin)
-        {
-            Tile tile = gameObject.GetComponent<Tilemap>().GetTile<Tile>(pos);
-            if (tile != null){
-                result.Add(tile);
-            }
-        }
-        return result;
-    }
-
-    void SortGameTiles(List<Tile> tiles)
-    {
-        List<Tile> result = new List<Tile>();
-        foreach(Tile tile in tiles)
-        {
-            Debug.Log(tile.transform.GetPosition().ToString());
-        }
-        // return result;
     }
 
     
@@ -115,8 +90,24 @@ public class tileLocations : MonoBehaviour
         return "None";
     }
 
+    int GetTileCount()
+    {
+        int count = 0;
+        BoundsInt bounds = gameObject.GetComponent<Tilemap>().cellBounds;
+        foreach (Vector3Int pos in bounds.allPositionsWithin)
+        {
+            if (gameObject.GetComponent<Tilemap>().GetTile<Tile>(pos) != null)
+            {
+                count += 1;
+            } 
+            
+        }
+        return count;
+    }
+
     void Awake()
     {
+        // Automatic waypoint generation.  _worldGameTileLocation holds the waypoints for the player tokens.
         _gameTilesDict = GetGameTilesDict();
         _gameTileLocation = GetPositionOrder(_gameTilesDict);
         _worldGameTileLocation = GetWorldPositionOrder(_gameTileLocation);
@@ -126,11 +117,7 @@ public class tileLocations : MonoBehaviour
     {
         StartLocation.SetText(GetTileLocationSprite(StartSprite));
         FinishLocation.SetText(GetTileLocationSprite(FinishSprite));
+        tileCount.SetText(GetTileCount().ToString());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
