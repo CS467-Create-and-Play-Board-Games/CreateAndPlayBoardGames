@@ -1,17 +1,26 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TokenSelection : MonoBehaviour
 {
+    public TokenSelectionData tokenData;
     public GameObject playerPreviewPrefab;
     public Transform previewPanelContainer;
     public int numberOfPlayers = 4; //can be changed based on how many players want to play. will need to be set up in other scene
     private int currentPlayerID = 1; // set as the starting point for the confirmSelection iteration 
+
+    private GameObject previousToken = null;
+    private bool pickedToken = false;
     private Dictionary<int, GameObject> playerPreviewPanel = new Dictionary<int, GameObject>();
+    public Dictionary<int, Sprite> playerSelectedTokens = new Dictionary<int, Sprite>();
 
     private void Start()
     {
+        numberOfPlayers = StateNameController.numberOfPlayers;
         CreatePreviewPanels();
     }
 
@@ -53,7 +62,16 @@ public class TokenSelection : MonoBehaviour
             previewImage.sprite = token.GetComponent<Image>().sprite;
             confirmButton.interactable = true;
             //makes the token option unslectable for other players
+            if (previousToken != null)
+            {
+                previousToken.GetComponent<Button>().interactable = true;
+                previousToken = null;
+            }
+
+            previousToken = token;
             token.GetComponent<Button>().interactable = false;
+            pickedToken = true;
+            
 
             Debug.Log($"Player {currentPlayerID} selected Token {token.name}");
         }
@@ -61,15 +79,24 @@ public class TokenSelection : MonoBehaviour
     //manages turn order and makes sure not more than the number of players in the game choose a token
     public void ConfirmSelection()
     {
-        if (currentPlayerID <= numberOfPlayers)
-        {
-            currentPlayerID++;
-            if (currentPlayerID > numberOfPlayers)
+        if (pickedToken == true){        
+            GameObject previewPanel = playerPreviewPanel[currentPlayerID];
+            Sprite selectedSprite = previewPanel.transform.Find("TokenImage").GetComponent<Image>().sprite;
+            playerSelectedTokens[currentPlayerID] = selectedSprite;
+
+            tokenData.playerSelectedTokens[currentPlayerID] = selectedSprite;
+
+            previousToken = null;
+            if (currentPlayerID < numberOfPlayers)
             {
-                return;
+                currentPlayerID++;
+                UpdateTurnUI();
+            }    
+            else
+            {
+                SceneManager.LoadScene("Play");
             }
-            UpdateTurnUI();
-        }
+        }    
     }
 
     //updates ui so that only the player whos turn it is to select a token can select a token

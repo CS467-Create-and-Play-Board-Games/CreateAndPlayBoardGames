@@ -15,9 +15,12 @@ EditorBuildSettings:
     path: Assets/Scenes/CreateEdit.unity
     guid: ee8d91b2e86238d4b8227e1ab6f4e130
   - enabled: 1
+    path: Assets/Scenes/ChooseToken.unity
+    guid: 08947ef7df37d254085201b2d2cb8576
+  - enabled: 1
     path: Assets/Scenes/Play.unity
     guid: b86c1ac434e3e2a4185676e81302b7a4
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Settings.unity
     guid: 23eb1c1b079863b4eb3f52cdcd01528f
   - enabled: 1
