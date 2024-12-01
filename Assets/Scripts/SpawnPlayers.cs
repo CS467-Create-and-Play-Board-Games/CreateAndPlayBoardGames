@@ -10,12 +10,14 @@ public class SpawnPlayers : MonoBehaviourPunCallbacks
     public GameObject playerPrefab;
     public Tilemap tilemap;
 
-    public List<Sprite> sprites;
+    private List<Sprite> sprites;
+    public TokenSelectionData tokenData;
     private UnityEngine.Vector3[] playerOffsets = new UnityEngine.Vector3[8];
 
 
     private void Start()
     {
+        sprites = new List<Sprite>(tokenData.playerSelectedTokens.Values);
         Debug.Log("Start for SpawnPlayers is running.");
         Vector3 startPosition = GetPosition("start");
         playerOffsets[0] = new UnityEngine.Vector3(0.05f, 0.20f, 0.0f);

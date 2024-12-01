@@ -20,7 +20,8 @@ public class ButtonListButton : MonoBehaviour
         Debug.Log("You clicked on the button associated with this file path " + filePath);
         StateNameController.filePathForGame = filePath;
         if (StateNameController.clickedButtonText.ToLower() == "play"){
-            SceneManager.LoadScene("Play");
+            SceneManager.LoadScene("ChooseToken");
+            //SceneManager.LoadScene("Play");
         } else {
             SceneManager.LoadScene("CreateEdit");
         }

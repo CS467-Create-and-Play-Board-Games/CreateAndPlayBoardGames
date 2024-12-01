@@ -93,7 +93,7 @@ public class SettingsMenuScript : MonoBehaviour
     /// Takes a float from the graphics slider, based on the 
     /// index value a case is determined and the graphics
     /// settings are changed accourdingly.
-      public void SetGraphicsQuality (float sliderValue)
+    public void SetGraphicsQuality (float sliderValue)
     {
         int index = Mathf.RoundToInt(sliderValue);
         switch (index)
