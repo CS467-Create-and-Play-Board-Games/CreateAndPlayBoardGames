@@ -1,6 +1,5 @@
 using Runtime.Controllers.System;
 using Runtime.Managers.Submanagers;
-using Runtime.Shared.SceneManagement;
 using UnityEngine;
 
 namespace Runtime.Managers
