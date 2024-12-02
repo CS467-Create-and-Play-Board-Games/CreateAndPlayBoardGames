@@ -190,7 +190,7 @@ namespace Runtime.Initializers
         {
             // Load the MainMenu scene.
             AsyncOperation loadMainMenu = SceneManager.LoadSceneAsync
-                ("MainMenu", LoadSceneMode.Single);
+                ("MainMenu", LoadSceneMode.Additive);
 
             // Wait until it is fully loaded.
             yield return new WaitUntil(() => loadMainMenu is { isDone: true });
