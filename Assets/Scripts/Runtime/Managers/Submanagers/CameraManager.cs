@@ -36,8 +36,9 @@ namespace Runtime.Managers.Submanagers
         /// </summary>
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            Debug.Log($"Scene {scene.name} loaded.");
             _cameraController = null;
-            Initialize(); // Reinitialize the camera when the scene changes
+            Initialize();
         }
 
         /// <summary>
@@ -46,11 +47,17 @@ namespace Runtime.Managers.Submanagers
         /// </summary>
         public void Initialize()
         {
-            mainCamera = Camera.main;
-
             if (CheckIfUsingCinemachine())
             {
                 Debug.Log("Cinemachine detected. Using Cinemachine camera.");
+                
+                // Disable the main camera if it's not the Cinemachine camera
+                if (mainCamera != null)
+                {
+                    // Destroy(mainCamera.gameObject);
+                    mainCamera.gameObject.SetActive(false); // Disable the manually created camera
+                }
+
                 return;
             }
 
