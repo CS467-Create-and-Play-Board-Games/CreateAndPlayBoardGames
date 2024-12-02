@@ -115,7 +115,6 @@ namespace Runtime.Managers
         /// </summary>
         void SetManagersAsChildren()
         {
-            cameraManager.transform.SetParent(transform);
             audioManager.transform.SetParent(transform);
             eventSystemManager.transform.SetParent(transform);
             gameDataPersistenceManager.transform.SetParent(transform);
@@ -124,6 +123,7 @@ namespace Runtime.Managers
             sceneController.transform.SetParent(transform);
             settingsManager.transform.SetParent(transform);
             userInterfaceManager.transform.SetParent(transform);
+            cameraManager.transform.SetParent(transform);
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Runtime.Managers
         /// </summary>
         private void Update()
         {
-            cameraManager.UpdateLogic();
+            cameraManager?.UpdateLogic();
         }
     }
 }
