@@ -12,7 +12,7 @@ public class Audio : MonoBehaviour
 
     public void PlayAudioClip(int audioClipNumber)
     {
-
+        Debug.Log("Playing audio clip # " + audioClipNumber);
         audioSource.clip = audioClips[audioClipNumber];
         audioSource.Play();
     }
